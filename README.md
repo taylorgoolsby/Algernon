@@ -1,6 +1,6 @@
 # Algernon
 
-Algernon AI is an AI chat app featuring offline models. 
+Algernon AI is an AI chat app featuring offline models, built in React-Native for iOS.
 
 ## Installation
 
