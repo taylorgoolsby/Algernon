@@ -1,0 +1,805 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0C80B921A6F3F58F76C31292 /* libPods-Algernon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-Algernon.a */; };
+		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		345C697E3065007B003C6225 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C697D30650075003C6225 /* SceneDelegate.swift */; };
+		34899D2A306727DB00089BEF /* TextFeatureExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = 34899D28306727DB00089BEF /* TextFeatureExtractor.m */; };
+		34899D2B306727DB00089BEF /* TextFeatureExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D29306727DB00089BEF /* TextFeatureExtractor.swift */; };
+		34899D3A3067282100089BEF /* BertTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D303067282100089BEF /* BertTokenizer.swift */; };
+		34899D3B3067282100089BEF /* all-MiniLM-L6-v2-coreml-float32.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 34899D2F3067282100089BEF /* all-MiniLM-L6-v2-coreml-float32.mlpackage */; };
+		34899D3C3067282100089BEF /* CodeGenTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D333067282100089BEF /* CodeGenTokenizer.swift */; };
+		34899D3D3067282100089BEF /* CodeGen-merges.txt in Resources */ = {isa = PBXBuildFile; fileRef = 34899D313067282100089BEF /* CodeGen-merges.txt */; };
+		34899D3E3067282100089BEF /* ggml-base-encoder.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = 34899D353067282100089BEF /* ggml-base-encoder.mlmodelc */; };
+		34899D3F3067282100089BEF /* CodeGen-vocab.json in Resources */ = {isa = PBXBuildFile; fileRef = 34899D323067282100089BEF /* CodeGen-vocab.json */; };
+		34899D403067282100089BEF /* ggml-tiny.bin in Resources */ = {isa = PBXBuildFile; fileRef = 34899D363067282100089BEF /* ggml-tiny.bin */; };
+		34899D413067282100089BEF /* ggml-base.bin in Resources */ = {isa = PBXBuildFile; fileRef = 34899D343067282100089BEF /* ggml-base.bin */; };
+		34899D423067282100089BEF /* MiniLM-vocab.txt in Resources */ = {isa = PBXBuildFile; fileRef = 34899D383067282100089BEF /* MiniLM-vocab.txt */; };
+		34899D433067282100089BEF /* ggml-tiny-encoder.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = 34899D373067282100089BEF /* ggml-tiny-encoder.mlmodelc */; };
+		34899D4630672AC800089BEF /* SwiftWhisper in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D4530672AC800089BEF /* SwiftWhisper */; };
+		34899D4930673E0200089BEF /* LLMNativeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 34899D4730673E0200089BEF /* LLMNativeModule.m */; };
+		34899D4A30673E0200089BEF /* LLMNativeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D4830673E0200089BEF /* LLMNativeModule.swift */; };
+		34899D583067574500089BEF /* Hub in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D573067574500089BEF /* Hub */; };
+		34899D5A3067574500089BEF /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D593067574500089BEF /* Tokenizers */; };
+		34899D5C3067574500089BEF /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D5B3067574500089BEF /* Transformers */; };
+		34899D75306757F400089BEF /* Gemma.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D60306757F400089BEF /* Gemma.swift */; };
+		34899D76306757F400089BEF /* Lora+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D69306757F400089BEF /* Lora+Data.swift */; };
+		34899D77306757F400089BEF /* Gemma2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D61306757F400089BEF /* Gemma2.swift */; };
+		34899D78306757F400089BEF /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D6A306757F400089BEF /* Models.swift */; };
+		34899D79306757F400089BEF /* Starcoder2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D6F306757F400089BEF /* Starcoder2.swift */; };
+		34899D7A306757F400089BEF /* Evaluate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D5F306757F400089BEF /* Evaluate.swift */; };
+		34899D7B306757F400089BEF /* Llama.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D64306757F400089BEF /* Llama.swift */; };
+		34899D7C306757F400089BEF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D73306757F400089BEF /* ContentView.swift */; };
+		34899D7D306757F400089BEF /* Phi3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D6D306757F400089BEF /* Phi3.swift */; };
+		34899D7E306757F400089BEF /* KVCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D63306757F400089BEF /* KVCache.swift */; };
+		34899D7F306757F400089BEF /* LLMModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D66306757F400089BEF /* LLMModel.swift */; };
+		34899D80306757F400089BEF /* SuScaledRotaryEmbedding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D70306757F400089BEF /* SuScaledRotaryEmbedding.swift */; };
+		34899D81306757F400089BEF /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D5E306757F400089BEF /* Configuration.swift */; };
+		34899D82306757F400089BEF /* Qwen2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D6E306757F400089BEF /* Qwen2.swift */; };
+		34899D83306757F400089BEF /* Internlm2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D62306757F400089BEF /* Internlm2.swift */; };
+		34899D84306757F400089BEF /* Tokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D71306757F400089BEF /* Tokenizer.swift */; };
+		34899D85306757F400089BEF /* Load.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D67306757F400089BEF /* Load.swift */; };
+		34899D86306757F400089BEF /* Cohere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D5D306757F400089BEF /* Cohere.swift */; };
+		34899D87306757F400089BEF /* OpenELM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D6B306757F400089BEF /* OpenELM.swift */; };
+		34899D88306757F400089BEF /* Phi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D6C306757F400089BEF /* Phi.swift */; };
+		34899D89306757F400089BEF /* Lora.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D68306757F400089BEF /* Lora.swift */; };
+		34899D8C3067585000089BEF /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D8B3067585000089BEF /* MLX */; };
+		34899D8E3067585000089BEF /* MLXFFT in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D8D3067585000089BEF /* MLXFFT */; };
+		34899D903067585000089BEF /* MLXFast in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D8F3067585000089BEF /* MLXFast */; };
+		34899D923067585000089BEF /* MLXLinalg in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D913067585000089BEF /* MLXLinalg */; };
+		34899D943067585000089BEF /* MLXNN in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D933067585000089BEF /* MLXNN */; };
+		34899D963067585000089BEF /* MLXOptimizers in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D953067585000089BEF /* MLXOptimizers */; };
+		34899D983067585000089BEF /* MLXRandom in Frameworks */ = {isa = PBXBuildFile; productRef = 34899D973067585000089BEF /* MLXRandom */; };
+		70E13A26338767186384147B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		13B07F961A680F5B00A75B9A /* Algernon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Algernon.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Algernon/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Algernon/Info.plist; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Algernon/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		345C697D30650075003C6225 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		34899D28306727DB00089BEF /* TextFeatureExtractor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextFeatureExtractor.m; sourceTree = "<group>"; };
+		34899D29306727DB00089BEF /* TextFeatureExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFeatureExtractor.swift; sourceTree = "<group>"; };
+		34899D2E306727E100089BEF /* Algernon-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Algernon-Bridging-Header.h"; sourceTree = "<group>"; };
+		34899D2F3067282100089BEF /* all-MiniLM-L6-v2-coreml-float32.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = "all-MiniLM-L6-v2-coreml-float32.mlpackage"; sourceTree = "<group>"; };
+		34899D303067282100089BEF /* BertTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BertTokenizer.swift; sourceTree = "<group>"; };
+		34899D313067282100089BEF /* CodeGen-merges.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "CodeGen-merges.txt"; sourceTree = "<group>"; };
+		34899D323067282100089BEF /* CodeGen-vocab.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "CodeGen-vocab.json"; sourceTree = "<group>"; };
+		34899D333067282100089BEF /* CodeGenTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeGenTokenizer.swift; sourceTree = "<group>"; };
+		34899D343067282100089BEF /* ggml-base.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "ggml-base.bin"; sourceTree = "<group>"; };
+		34899D353067282100089BEF /* ggml-base-encoder.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = "ggml-base-encoder.mlmodelc"; sourceTree = "<group>"; };
+		34899D363067282100089BEF /* ggml-tiny.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "ggml-tiny.bin"; sourceTree = "<group>"; };
+		34899D373067282100089BEF /* ggml-tiny-encoder.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = "ggml-tiny-encoder.mlmodelc"; sourceTree = "<group>"; };
+		34899D383067282100089BEF /* MiniLM-vocab.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MiniLM-vocab.txt"; sourceTree = "<group>"; };
+		34899D4730673E0200089BEF /* LLMNativeModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLMNativeModule.m; sourceTree = "<group>"; };
+		34899D4830673E0200089BEF /* LLMNativeModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMNativeModule.swift; sourceTree = "<group>"; };
+		34899D5D306757F400089BEF /* Cohere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cohere.swift; sourceTree = "<group>"; };
+		34899D5E306757F400089BEF /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		34899D5F306757F400089BEF /* Evaluate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Evaluate.swift; sourceTree = "<group>"; };
+		34899D60306757F400089BEF /* Gemma.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gemma.swift; sourceTree = "<group>"; };
+		34899D61306757F400089BEF /* Gemma2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gemma2.swift; sourceTree = "<group>"; };
+		34899D62306757F400089BEF /* Internlm2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Internlm2.swift; sourceTree = "<group>"; };
+		34899D63306757F400089BEF /* KVCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KVCache.swift; sourceTree = "<group>"; };
+		34899D64306757F400089BEF /* Llama.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Llama.swift; sourceTree = "<group>"; };
+		34899D65306757F400089BEF /* LLM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLM.h; sourceTree = "<group>"; };
+		34899D66306757F400089BEF /* LLMModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMModel.swift; sourceTree = "<group>"; };
+		34899D67306757F400089BEF /* Load.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Load.swift; sourceTree = "<group>"; };
+		34899D68306757F400089BEF /* Lora.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lora.swift; sourceTree = "<group>"; };
+		34899D69306757F400089BEF /* Lora+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Lora+Data.swift"; sourceTree = "<group>"; };
+		34899D6A306757F400089BEF /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		34899D6B306757F400089BEF /* OpenELM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenELM.swift; sourceTree = "<group>"; };
+		34899D6C306757F400089BEF /* Phi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Phi.swift; sourceTree = "<group>"; };
+		34899D6D306757F400089BEF /* Phi3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Phi3.swift; sourceTree = "<group>"; };
+		34899D6E306757F400089BEF /* Qwen2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Qwen2.swift; sourceTree = "<group>"; };
+		34899D6F306757F400089BEF /* Starcoder2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Starcoder2.swift; sourceTree = "<group>"; };
+		34899D70306757F400089BEF /* SuScaledRotaryEmbedding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuScaledRotaryEmbedding.swift; sourceTree = "<group>"; };
+		34899D71306757F400089BEF /* Tokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokenizer.swift; sourceTree = "<group>"; };
+		34899D73306757F400089BEF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3B4392A12AC88292D35C810B /* Pods-Algernon.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Algernon.debug.xcconfig"; path = "Target Support Files/Pods-Algernon/Pods-Algernon.debug.xcconfig"; sourceTree = "<group>"; };
+		5709B34CF0A7D63546082F79 /* Pods-Algernon.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Algernon.release.xcconfig"; path = "Target Support Files/Pods-Algernon/Pods-Algernon.release.xcconfig"; sourceTree = "<group>"; };
+		5DCACB8F33CDC322A6C60F78 /* libPods-Algernon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Algernon.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Algernon/AppDelegate.swift; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Algernon/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				34899D8C3067585000089BEF /* MLX in Frameworks */,
+				34899D583067574500089BEF /* Hub in Frameworks */,
+				34899D5A3067574500089BEF /* Tokenizers in Frameworks */,
+				34899D5C3067574500089BEF /* Transformers in Frameworks */,
+				34899D8E3067585000089BEF /* MLXFFT in Frameworks */,
+				0C80B921A6F3F58F76C31292 /* libPods-Algernon.a in Frameworks */,
+				34899D963067585000089BEF /* MLXOptimizers in Frameworks */,
+				34899D983067585000089BEF /* MLXRandom in Frameworks */,
+				34899D903067585000089BEF /* MLXFast in Frameworks */,
+				34899D923067585000089BEF /* MLXLinalg in Frameworks */,
+				34899D943067585000089BEF /* MLXNN in Frameworks */,
+				34899D4630672AC800089BEF /* SwiftWhisper in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		13B07FAE1A68108700A75B9A /* Algernon */ = {
+			isa = PBXGroup;
+			children = (
+				34899D74306757F400089BEF /* LLMEval */,
+				34899D393067282100089BEF /* Models */,
+				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				761780EC2CA45674006654EE /* AppDelegate.swift */,
+				345C697D30650075003C6225 /* SceneDelegate.swift */,
+				13B07FB61A68108700A75B9A /* Info.plist */,
+				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				34899D28306727DB00089BEF /* TextFeatureExtractor.m */,
+				34899D29306727DB00089BEF /* TextFeatureExtractor.swift */,
+				34899D2E306727E100089BEF /* Algernon-Bridging-Header.h */,
+				34899D4730673E0200089BEF /* LLMNativeModule.m */,
+				34899D4830673E0200089BEF /* LLMNativeModule.swift */,
+			);
+			name = Algernon;
+			sourceTree = "<group>";
+		};
+		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
+				5DCACB8F33CDC322A6C60F78 /* libPods-Algernon.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		34899D393067282100089BEF /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				34899D2F3067282100089BEF /* all-MiniLM-L6-v2-coreml-float32.mlpackage */,
+				34899D303067282100089BEF /* BertTokenizer.swift */,
+				34899D313067282100089BEF /* CodeGen-merges.txt */,
+				34899D323067282100089BEF /* CodeGen-vocab.json */,
+				34899D333067282100089BEF /* CodeGenTokenizer.swift */,
+				34899D343067282100089BEF /* ggml-base.bin */,
+				34899D353067282100089BEF /* ggml-base-encoder.mlmodelc */,
+				34899D363067282100089BEF /* ggml-tiny.bin */,
+				34899D373067282100089BEF /* ggml-tiny-encoder.mlmodelc */,
+				34899D383067282100089BEF /* MiniLM-vocab.txt */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		34899D72306757F400089BEF /* LLM */ = {
+			isa = PBXGroup;
+			children = (
+				34899D5D306757F400089BEF /* Cohere.swift */,
+				34899D5E306757F400089BEF /* Configuration.swift */,
+				34899D5F306757F400089BEF /* Evaluate.swift */,
+				34899D60306757F400089BEF /* Gemma.swift */,
+				34899D61306757F400089BEF /* Gemma2.swift */,
+				34899D62306757F400089BEF /* Internlm2.swift */,
+				34899D63306757F400089BEF /* KVCache.swift */,
+				34899D64306757F400089BEF /* Llama.swift */,
+				34899D65306757F400089BEF /* LLM.h */,
+				34899D66306757F400089BEF /* LLMModel.swift */,
+				34899D67306757F400089BEF /* Load.swift */,
+				34899D68306757F400089BEF /* Lora.swift */,
+				34899D69306757F400089BEF /* Lora+Data.swift */,
+				34899D6A306757F400089BEF /* Models.swift */,
+				34899D6B306757F400089BEF /* OpenELM.swift */,
+				34899D6C306757F400089BEF /* Phi.swift */,
+				34899D6D306757F400089BEF /* Phi3.swift */,
+				34899D6E306757F400089BEF /* Qwen2.swift */,
+				34899D6F306757F400089BEF /* Starcoder2.swift */,
+				34899D70306757F400089BEF /* SuScaledRotaryEmbedding.swift */,
+				34899D71306757F400089BEF /* Tokenizer.swift */,
+			);
+			path = LLM;
+			sourceTree = "<group>";
+		};
+		34899D74306757F400089BEF /* LLMEval */ = {
+			isa = PBXGroup;
+			children = (
+				34899D72306757F400089BEF /* LLM */,
+				34899D73306757F400089BEF /* ContentView.swift */,
+			);
+			path = LLMEval;
+			sourceTree = "<group>";
+		};
+		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		83CBB9F61A601CBA00E9B192 = {
+			isa = PBXGroup;
+			children = (
+				13B07FAE1A68108700A75B9A /* Algernon */,
+				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				83CBBA001A601CBA00E9B192 /* Products */,
+				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+				BBD78D7AC51CEA395F1C20DB /* Pods */,
+			);
+			indentWidth = 2;
+			sourceTree = "<group>";
+			tabWidth = 2;
+			usesTabs = 0;
+		};
+		83CBBA001A601CBA00E9B192 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				13B07F961A680F5B00A75B9A /* Algernon.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3B4392A12AC88292D35C810B /* Pods-Algernon.debug.xcconfig */,
+				5709B34CF0A7D63546082F79 /* Pods-Algernon.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		13B07F861A680F5B00A75B9A /* Algernon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Algernon" */;
+			buildPhases = (
+				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
+				13B07F871A680F5B00A75B9A /* Sources */,
+				13B07F8C1A680F5B00A75B9A /* Frameworks */,
+				13B07F8E1A680F5B00A75B9A /* Resources */,
+				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
+				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Algernon;
+			packageProductDependencies = (
+				34899D4530672AC800089BEF /* SwiftWhisper */,
+				34899D573067574500089BEF /* Hub */,
+				34899D593067574500089BEF /* Tokenizers */,
+				34899D5B3067574500089BEF /* Transformers */,
+				34899D8B3067585000089BEF /* MLX */,
+				34899D8D3067585000089BEF /* MLXFFT */,
+				34899D8F3067585000089BEF /* MLXFast */,
+				34899D913067585000089BEF /* MLXLinalg */,
+				34899D933067585000089BEF /* MLXNN */,
+				34899D953067585000089BEF /* MLXOptimizers */,
+				34899D973067585000089BEF /* MLXRandom */,
+			);
+			productName = Algernon;
+			productReference = 13B07F961A680F5B00A75B9A /* Algernon.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		83CBB9F71A601CBA00E9B192 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1210;
+				TargetAttributes = {
+					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 2700;
+					};
+				};
+			};
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Algernon" */;
+			compatibilityVersion = "Xcode 12.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 83CBB9F61A601CBA00E9B192;
+			packageReferences = (
+				34899D4430672AC800089BEF /* XCRemoteSwiftPackageReference "SwiftWhisper" */,
+				34899D563067574500089BEF /* XCRemoteSwiftPackageReference "swift-transformers" */,
+				34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */,
+			);
+			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				13B07F861A680F5B00A75B9A /* Algernon */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		13B07F8E1A680F5B00A75B9A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				34899D3D3067282100089BEF /* CodeGen-merges.txt in Resources */,
+				34899D3E3067282100089BEF /* ggml-base-encoder.mlmodelc in Resources */,
+				34899D3F3067282100089BEF /* CodeGen-vocab.json in Resources */,
+				34899D403067282100089BEF /* ggml-tiny.bin in Resources */,
+				34899D413067282100089BEF /* ggml-base.bin in Resources */,
+				34899D423067282100089BEF /* MiniLM-vocab.txt in Resources */,
+				34899D433067282100089BEF /* ggml-tiny-encoder.mlmodelc in Resources */,
+				70E13A26338767186384147B /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/.xcode.env",
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"\\\"$WITH_ENVIRONMENT\\\" \\\"$REACT_NATIVE_XCODE\\\"\"\n";
+		};
+		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Algernon-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		13B07F871A680F5B00A75B9A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				34899D4930673E0200089BEF /* LLMNativeModule.m in Sources */,
+				34899D4A30673E0200089BEF /* LLMNativeModule.swift in Sources */,
+				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+				34899D2A306727DB00089BEF /* TextFeatureExtractor.m in Sources */,
+				34899D2B306727DB00089BEF /* TextFeatureExtractor.swift in Sources */,
+				34899D3A3067282100089BEF /* BertTokenizer.swift in Sources */,
+				34899D75306757F400089BEF /* Gemma.swift in Sources */,
+				34899D76306757F400089BEF /* Lora+Data.swift in Sources */,
+				34899D77306757F400089BEF /* Gemma2.swift in Sources */,
+				34899D78306757F400089BEF /* Models.swift in Sources */,
+				34899D79306757F400089BEF /* Starcoder2.swift in Sources */,
+				34899D7A306757F400089BEF /* Evaluate.swift in Sources */,
+				34899D7B306757F400089BEF /* Llama.swift in Sources */,
+				34899D7C306757F400089BEF /* ContentView.swift in Sources */,
+				34899D7D306757F400089BEF /* Phi3.swift in Sources */,
+				34899D7E306757F400089BEF /* KVCache.swift in Sources */,
+				34899D7F306757F400089BEF /* LLMModel.swift in Sources */,
+				34899D80306757F400089BEF /* SuScaledRotaryEmbedding.swift in Sources */,
+				34899D81306757F400089BEF /* Configuration.swift in Sources */,
+				34899D82306757F400089BEF /* Qwen2.swift in Sources */,
+				34899D83306757F400089BEF /* Internlm2.swift in Sources */,
+				34899D84306757F400089BEF /* Tokenizer.swift in Sources */,
+				34899D85306757F400089BEF /* Load.swift in Sources */,
+				34899D86306757F400089BEF /* Cohere.swift in Sources */,
+				34899D87306757F400089BEF /* OpenELM.swift in Sources */,
+				34899D88306757F400089BEF /* Phi.swift in Sources */,
+				34899D89306757F400089BEF /* Lora.swift in Sources */,
+				34899D3B3067282100089BEF /* all-MiniLM-L6-v2-coreml-float32.mlpackage in Sources */,
+				34899D3C3067282100089BEF /* CodeGenTokenizer.swift in Sources */,
+				345C697E3065007B003C6225 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		13B07F941A680F5B00A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-Algernon.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TY6EV5VRJ3;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = Algernon/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = to.tgoolsby.algernon;
+				PRODUCT_NAME = Algernon;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_OBJC_BRIDGING_HEADER = "Algernon-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		13B07F951A680F5B00A75B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-Algernon.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TY6EV5VRJ3;
+				INFOPLIST_FILE = Algernon/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = to.tgoolsby.algernon;
+				PRODUCT_NAME = Algernon;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_OBJC_BRIDGING_HEADER = "Algernon-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		83CBBA201A601CBA00E9B192 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/lib/swift\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DFOLLY_NO_CONFIG",
+					"-DFOLLY_MOBILE=1",
+					"-DFOLLY_USE_LIBCPP=1",
+					"-DFOLLY_CFG_NO_COROUTINES=1",
+					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
+				PODFILE_DIR = "$(SRCROOT)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				USE_HERMES = true;
+			};
+			name = Debug;
+		};
+		83CBBA211A601CBA00E9B192 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/lib/swift\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DFOLLY_NO_CONFIG",
+					"-DFOLLY_MOBILE=1",
+					"-DFOLLY_USE_LIBCPP=1",
+					"-DFOLLY_CFG_NO_COROUTINES=1",
+					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
+				PODFILE_DIR = "$(SRCROOT)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				USE_HERMES = true;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Algernon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13B07F941A680F5B00A75B9A /* Debug */,
+				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Algernon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83CBBA201A601CBA00E9B192 /* Debug */,
+				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		34899D4430672AC800089BEF /* XCRemoteSwiftPackageReference "SwiftWhisper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exPHAT/SwiftWhisper.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.2.0;
+			};
+		};
+		34899D563067574500089BEF /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = exactVersion;
+				version = 1.3.4;
+			};
+			traits = (
+			);
+		};
+		34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift";
+			requirement = {
+				kind = exactVersion;
+				version = 0.31.6;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		34899D4530672AC800089BEF /* SwiftWhisper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D4430672AC800089BEF /* XCRemoteSwiftPackageReference "SwiftWhisper" */;
+			productName = SwiftWhisper;
+		};
+		34899D573067574500089BEF /* Hub */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D563067574500089BEF /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Hub;
+		};
+		34899D593067574500089BEF /* Tokenizers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D563067574500089BEF /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Tokenizers;
+		};
+		34899D5B3067574500089BEF /* Transformers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D563067574500089BEF /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Transformers;
+		};
+		34899D8B3067585000089BEF /* MLX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLX;
+		};
+		34899D8D3067585000089BEF /* MLXFFT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLXFFT;
+		};
+		34899D8F3067585000089BEF /* MLXFast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLXFast;
+		};
+		34899D913067585000089BEF /* MLXLinalg */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLXLinalg;
+		};
+		34899D933067585000089BEF /* MLXNN */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLXNN;
+		};
+		34899D953067585000089BEF /* MLXOptimizers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLXOptimizers;
+		};
+		34899D973067585000089BEF /* MLXRandom */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLXRandom;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
+}
