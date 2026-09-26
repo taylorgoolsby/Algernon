@@ -1,4 +1,4 @@
-# Algernon
+# Algernon ![Logo](./ios/Algernon/Images.xcassets/AppIcon.appiconset/Å-60.png)
 
 Algernon AI is an AI chat app featuring offline models, built in React-Native 87 for iOS 27.
 
