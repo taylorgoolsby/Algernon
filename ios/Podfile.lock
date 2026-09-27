@@ -1246,6 +1246,28 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - react-native-blur (4.4.1):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - react-native-safe-area-context (5.10.0):
     - hermes-engine
     - RCTRequired
@@ -1315,6 +1337,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - react-native-vector-icons-ionicons (13.1.4)
   - React-NativeModulesApple (0.87.1):
     - hermes-engine
     - React-bridging
@@ -1774,7 +1797,9 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - React-mutationobservernativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver`)
+  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-vector-icons-ionicons (from `../node_modules/@react-native-vector-icons/ionicons`)"
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-networking (from `../node_modules/react-native/ReactCommon/react/networking`)
   - React-oscompat (from `../node_modules/react-native/ReactCommon/oscompat`)
@@ -1911,8 +1936,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   React-mutationobservernativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver"
+  react-native-blur:
+    :path: "../node_modules/@react-native-community/blur"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-vector-icons-ionicons:
+    :path: "../node_modules/@react-native-vector-icons/ionicons"
   React-NativeModulesApple:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-networking:
@@ -2040,7 +2069,9 @@ SPEC CHECKSUMS:
   React-Mapbuffer: fedd8e34e26194cf70bd66e77c49170e22d88b82
   React-microtasksnativemodule: aa3ea1db91e208694042bd8af0bda65202f4a68d
   React-mutationobservernativemodule: 2dcf0e333fe6621c3ffea838fcc48d54435724a1
+  react-native-blur: 8fade3c195ce83cfa6578e3e77b01bbcf935a8e1
   react-native-safe-area-context: d31381d291323aff31330587eaac543dabd0e258
+  react-native-vector-icons-ionicons: cc4bfc451b5d5c61d3c91e05f5a65c097dd0e5cb
   React-NativeModulesApple: 885f4cd7626a1ffe20e0dcd23ef8528f415795d3
   React-networking: 31c21d3a8ea93c859706f876d27578782b05d250
   React-oscompat: 3175a287dd7175d1a20fdce5048a4b9e11f4b915

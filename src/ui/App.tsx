@@ -7,13 +7,15 @@
 
 import { NewAppScreen } from '@react-native/new-app-screen';
 import {useEffect, useState} from 'react'
-import { NativeEventEmitter, StatusBar, StyleSheet, Text, useColorScheme, View, Button } from 'react-native';
+import { NativeEventEmitter, StatusBar, StyleSheet, useColorScheme, View, Button } from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import {NativeModules} from 'react-native'
 import generateTextResponse from '../agent/generateTextResponse';
+import Text from './Text'
+import {NativeModules} from 'react-native'
+
 const { TextFeatureExtractor } = NativeModules
 
 function App() {

@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import App from './App';
+import ChatScreen from './ChatScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -8,9 +9,16 @@ export default function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Home"
           component={App}
+          options={{
+            headerShown: false,
+          }}
+        /> */}
+        <Stack.Screen
+          name="Chat"
+          component={ChatScreen}
           options={{
             headerShown: false,
           }}
