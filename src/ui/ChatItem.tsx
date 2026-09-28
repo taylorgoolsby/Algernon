@@ -15,17 +15,16 @@ import Markdown from 'react-native-markdown-display';
 import ProfilePic from './ProfilePic';
 import { Ionicons } from '@react-native-vector-icons/ionicons/static';
 import Spinner from './Spinner';
+import type { Message } from '../store/ChatStore';
 
 const screenWidth = Dimensions.get('window').width;
 
 type ChatItemProps = {
-  name: string;
-  content: string;
-  role: string;
+  message: Message
 };
 
 const ChatItem = (props: ChatItemProps) => {
-  const { name, content, role } = props;
+  const { name, content, role } = props.message;
 
   return (
     <View
@@ -42,11 +41,11 @@ const ChatItem = (props: ChatItemProps) => {
 };
 
 const ProfileRow = (props: ChatItemProps) => {
-  const { name, content, role } = props;
+  const { name, content, role, messageId } = props.message;
 
   return (
     <View style={styles.profileRow}>
-      <ProfilePic message={{ role, messageId: 0 }} />
+      <ProfilePic message={{ role, messageId }} />
       <Text
         style={role === 'assistant' ? styles.assistantText : styles.userText}
       >
@@ -57,7 +56,7 @@ const ProfileRow = (props: ChatItemProps) => {
 };
 
 const Message = (props: ChatItemProps) => {
-  const { name, content, role } = props;
+  const { name, content, role } = props.message;
 
   return !!content ? (
     <View style={{
@@ -79,7 +78,7 @@ const Message = (props: ChatItemProps) => {
 };
 
 const Controls = (props: ChatItemProps) => {
-  const { name, content, role } = props;
+  const { name, content, role } = props.message;
 
   const [isConfirming, setIsConfirming] = useState(false);
 

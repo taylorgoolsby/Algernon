@@ -54,7 +54,7 @@ const ChatScrollView = observer(() => {
         extraData={chatStore.messages.map(message => message.content)}
         renderItem={({ item }) => {
           return (
-            <ChatItem name={item.name} content={item.content} role={item.role} />
+            <ChatItem message={item} />
           )
         }}
         keyExtractor={item => item.messageId.toString()}
