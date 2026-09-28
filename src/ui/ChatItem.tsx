@@ -11,7 +11,7 @@ import Colors, {
   aiText2,
 } from './Colors';
 import Text from './Text';
-import MarkdownText from './MarkdownText';
+import Markdown from 'react-native-markdown-display';
 import ProfilePic from './ProfilePic';
 import { Ionicons } from '@react-native-vector-icons/ionicons/static';
 import Spinner from './Spinner';
@@ -60,13 +60,22 @@ const Message = (props: ChatItemProps) => {
   const { name, content, role } = props;
 
   return !!content ? (
-    <MarkdownText
-      textStyle={role === 'assistant' ? styles.assistantText : styles.userText}
-      // onLayout={onMarkdownLayout}
-    >
-      {content.trim()}
-    </MarkdownText>
-  ): <Spinner/>
+    <View style={{
+      marginTop: -8,
+      marginBottom: -8,
+      marginLeft: 2
+    }}>
+      <Markdown
+        style={{
+          body: { color: 'white', fontFamily: Colors.fontFamily, fontWeight: Colors.fontWeight },
+        }}
+      >
+        {content.trim()}
+      </Markdown>
+    </View>
+  ) : (
+    <Spinner />
+  );
 };
 
 const Controls = (props: ChatItemProps) => {
@@ -76,28 +85,30 @@ const Controls = (props: ChatItemProps) => {
 
   return (
     <View style={styles.controls}>
-      <TouchableOpacity style={{
-        width: 32,
-        height: 32,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: -5,
-        marginBottom: -5,
-        // backgroundColor: 'red'
-      }}>
+      <TouchableOpacity
+        style={{
+          width: 32,
+          height: 32,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginRight: -5,
+          marginBottom: -5,
+          // backgroundColor: 'red'
+        }}
+      >
         <Ionicons
-        name={'close-outline'}
-        size={18}
-        color={
-          role === 'user'
-            ? isConfirming
-              ? userText2Active
-              : userText2
-            : isConfirming
-            ? aiText2Active
-            : aiText2
-        }
-      />
+          name={'close-outline'}
+          size={18}
+          color={
+            role === 'user'
+              ? isConfirming
+                ? userText2Active
+                : userText2
+              : isConfirming
+              ? aiText2Active
+              : aiText2
+          }
+        />
       </TouchableOpacity>
     </View>
   );
@@ -134,12 +145,13 @@ const styles = StyleSheet.create({
   userText: {
     color: userText,
     marginLeft: 2,
+    marginRight: 7,
   },
   controls: {
     height: 26,
     flexDirection: 'row',
     alignSelf: 'flex-end',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
 });
 
