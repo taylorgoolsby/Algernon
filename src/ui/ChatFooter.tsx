@@ -1,51 +1,95 @@
-
-import React, { useState } from 'react'
-import {View, TextInput, StyleSheet, KeyboardAvoidingView, Dimensions, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react';
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {BlurView} from '@react-native-community/blur'
-import Colors from '../Colors'
+import { BlurView } from '@react-native-community/blur';
+import Colors, {footerActive, footerInactive} from '../Colors';
 import { chatStore } from '../store/ChatStore';
+import { Ionicons } from '@react-native-vector-icons/ionicons/static';
 
-const screenWidth = Dimensions.get('window').width
+const screenWidth = Dimensions.get('window').width;
 
 const ChatFooter = () => {
-  const [searchMode, setSearchMode] = useState(false)
+  const [searchMode, setSearchMode] = useState(false);
 
   const safeAreaInsets = useSafeAreaInsets();
 
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState('');
 
   return (
-    <KeyboardAvoidingView 
-      style={[styles.container, {
-        height: 50 + safeAreaInsets.bottom
-      }]} 
+    <KeyboardAvoidingView
+      style={[
+        styles.container,
+        {
+          height: 50 + safeAreaInsets.bottom,
+        },
+      ]}
       behavior={'position'}
       keyboardVerticalOffset={-safeAreaInsets.bottom}
     >
-    <BlurView style={{
-      flex: 1,
-      alignSelf: 'stretch',
-      width: screenWidth,
-      flexDirection: 'row'
-    }}>
-      <TextInput 
-        style={styles.input}
-        placeholder={searchMode ? 'Search' : 'Message'}
-        placeholderTextColor={Colors.sendIconDisabledBg}
-        returnKeyType="done"
-        value={value}
-        onChangeText={setValue}
-        onSubmitEditing={({ nativeEvent }) => {
-          const text = nativeEvent.text;
-          chatStore.submitMessage(text)
-          setValue('')
+      <BlurView
+        style={{
+          flex: 1,
+          alignSelf: 'stretch',
+          width: screenWidth,
         }}
-      />
-    </BlurView>
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          <TouchableOpacity>
+            <Ionicons
+              style={{
+                // width: 20,
+                // height: 20,
+                marginTop: 0,
+                marginLeft: 23,
+              }}
+              name={'search-circle'}
+              size={28}
+              color={footerInactive}
+            />
+          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder={searchMode ? 'Search' : 'Message'}
+            placeholderTextColor={Colors.sendIconDisabledBg}
+            returnKeyType="done"
+            value={value}
+            onChangeText={setValue}
+            onSubmitEditing={({ nativeEvent }) => {
+              const text = nativeEvent.text;
+              chatStore.submitMessage(text);
+              setValue('');
+            }}
+          />
+          <TouchableOpacity>
+            <Ionicons
+              style={{
+                // width: 20,
+                // height: 20,
+                marginTop: 0,
+                marginRight: 23,
+              }}
+              name={'mic'}
+              size={24}
+              color={footerInactive}
+            />
+          </TouchableOpacity>
+        </View>
+      </BlurView>
     </KeyboardAvoidingView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -71,8 +115,7 @@ const styles = StyleSheet.create({
     fontSize: Colors.fontSize,
     fontFamily: Colors.fontFamily,
     fontWeight: '300',
+  },
+});
 
-  }
-})
-
-export default ChatFooter
+export default ChatFooter;
