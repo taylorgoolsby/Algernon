@@ -45,7 +45,8 @@ async function initData() {
   firstMessage = await MessageInterface.insert(
     chatStore.windowId,
     MessageRole.ASSISTANT,
-    'Hey there! Share your thoughts, and I’ll help you uncover the hidden patterns within.',
+    // 'Hey there! Share your thoughts, and I’ll help you uncover the hidden patterns within.',
+    'Hi, how can I help you?',
     null,
     true,
   )

@@ -14,6 +14,11 @@
 		346AE8DA306B6BB0003F3E36 /* DatabaseModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 346AE8D8306B6BB0003F3E36 /* DatabaseModule.m */; };
 		346AE8DB306B6BB0003F3E36 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346AE8D7306B6BB0003F3E36 /* DatabaseManager.swift */; };
 		346AE8DC306B6BB0003F3E36 /* DatabaseModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346AE8D9306B6BB0003F3E36 /* DatabaseModule.swift */; };
+		347C1CC0306E0CB100DF2C88 /* FaissBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 347C1CBF306E0CB100DF2C88 /* FaissBridge.m */; };
+		347C1CC3306E0CBE00DF2C88 /* faiss.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 347C1CC1306E0CBE00DF2C88 /* faiss.xcframework */; };
+		347C1CC4306E0CBE00DF2C88 /* faiss_c.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 347C1CC2306E0CBE00DF2C88 /* faiss_c.xcframework */; };
+		347C1CC7306E0D0B00DF2C88 /* ClusteringAndEllipsoids.m in Sources */ = {isa = PBXBuildFile; fileRef = 347C1CC6306E0D0B00DF2C88 /* ClusteringAndEllipsoids.m */; };
+		347C1CCA306E0EA000DF2C88 /* OpenMP in Frameworks */ = {isa = PBXBuildFile; productRef = 347C1CC9306E0EA000DF2C88 /* OpenMP */; };
 		34899D2A306727DB00089BEF /* TextFeatureExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = 34899D28306727DB00089BEF /* TextFeatureExtractor.m */; };
 		34899D2B306727DB00089BEF /* TextFeatureExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D29306727DB00089BEF /* TextFeatureExtractor.swift */; };
 		34899D3A3067282100089BEF /* BertTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D303067282100089BEF /* BertTokenizer.swift */; };
@@ -84,6 +89,12 @@
 		346AE8D7306B6BB0003F3E36 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		346AE8D8306B6BB0003F3E36 /* DatabaseModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseModule.m; sourceTree = "<group>"; };
 		346AE8D9306B6BB0003F3E36 /* DatabaseModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseModule.swift; sourceTree = "<group>"; };
+		347C1CBE306E0CB100DF2C88 /* FaissBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FaissBridge.h; sourceTree = "<group>"; };
+		347C1CBF306E0CB100DF2C88 /* FaissBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FaissBridge.m; sourceTree = "<group>"; };
+		347C1CC1306E0CBE00DF2C88 /* faiss.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = faiss.xcframework; sourceTree = "<group>"; };
+		347C1CC2306E0CBE00DF2C88 /* faiss_c.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = faiss_c.xcframework; sourceTree = "<group>"; };
+		347C1CC5306E0D0B00DF2C88 /* ClusteringAndEllipsoids.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClusteringAndEllipsoids.h; sourceTree = "<group>"; };
+		347C1CC6306E0D0B00DF2C88 /* ClusteringAndEllipsoids.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClusteringAndEllipsoids.m; sourceTree = "<group>"; };
 		34899D28306727DB00089BEF /* TextFeatureExtractor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextFeatureExtractor.m; sourceTree = "<group>"; };
 		34899D29306727DB00089BEF /* TextFeatureExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFeatureExtractor.swift; sourceTree = "<group>"; };
 		34899D2E306727E100089BEF /* Algernon-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Algernon-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -146,7 +157,10 @@
 			files = (
 				34899D8C3067585000089BEF /* MLX in Frameworks */,
 				34899D583067574500089BEF /* Hub in Frameworks */,
+				347C1CC3306E0CBE00DF2C88 /* faiss.xcframework in Frameworks */,
+				347C1CC4306E0CBE00DF2C88 /* faiss_c.xcframework in Frameworks */,
 				34899D5A3067574500089BEF /* Tokenizers in Frameworks */,
+				347C1CCA306E0EA000DF2C88 /* OpenMP in Frameworks */,
 				34899D5C3067574500089BEF /* Transformers in Frameworks */,
 				34899D8E3067585000089BEF /* MLXFFT in Frameworks */,
 				346AE8D6306B6A4E003F3E36 /* GRDB in Frameworks */,
@@ -183,6 +197,10 @@
 				346AE8D7306B6BB0003F3E36 /* DatabaseManager.swift */,
 				346AE8D8306B6BB0003F3E36 /* DatabaseModule.m */,
 				346AE8D9306B6BB0003F3E36 /* DatabaseModule.swift */,
+				347C1CBE306E0CB100DF2C88 /* FaissBridge.h */,
+				347C1CBF306E0CB100DF2C88 /* FaissBridge.m */,
+				347C1CC5306E0D0B00DF2C88 /* ClusteringAndEllipsoids.h */,
+				347C1CC6306E0D0B00DF2C88 /* ClusteringAndEllipsoids.m */,
 			);
 			name = Algernon;
 			sourceTree = "<group>";
@@ -190,6 +208,8 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				347C1CC1306E0CBE00DF2C88 /* faiss.xcframework */,
+				347C1CC2306E0CBE00DF2C88 /* faiss_c.xcframework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-Algernon.a */,
 			);
@@ -339,6 +359,7 @@
 				34899D953067585000089BEF /* MLXOptimizers */,
 				34899D973067585000089BEF /* MLXRandom */,
 				346AE8D5306B6A4E003F3E36 /* GRDB */,
+				347C1CC9306E0EA000DF2C88 /* OpenMP */,
 			);
 			productName = Algernon;
 			productReference = 13B07F961A680F5B00A75B9A /* Algernon.app */;
@@ -370,7 +391,8 @@
 				34899D4430672AC800089BEF /* XCRemoteSwiftPackageReference "SwiftWhisper" */,
 				34899D563067574500089BEF /* XCRemoteSwiftPackageReference "swift-transformers" */,
 				34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */,
-				346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB" */,
+				347C1CC8306E0EA000DF2C88 /* XCRemoteSwiftPackageReference "openmp-mobile" */,
 			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
@@ -436,9 +458,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -475,9 +501,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -496,6 +526,7 @@
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
 				34899D2A306727DB00089BEF /* TextFeatureExtractor.m in Sources */,
 				346AE8DA306B6BB0003F3E36 /* DatabaseModule.m in Sources */,
+				347C1CC0306E0CB100DF2C88 /* FaissBridge.m in Sources */,
 				346AE8DB306B6BB0003F3E36 /* DatabaseManager.swift in Sources */,
 				346AE8DC306B6BB0003F3E36 /* DatabaseModule.swift in Sources */,
 				34899D2B306727DB00089BEF /* TextFeatureExtractor.swift in Sources */,
@@ -513,6 +544,7 @@
 				34899D7F306757F400089BEF /* LLMModel.swift in Sources */,
 				34899D80306757F400089BEF /* SuScaledRotaryEmbedding.swift in Sources */,
 				34899D81306757F400089BEF /* Configuration.swift in Sources */,
+				347C1CC7306E0D0B00DF2C88 /* ClusteringAndEllipsoids.m in Sources */,
 				34899D82306757F400089BEF /* Qwen2.swift in Sources */,
 				34899D83306757F400089BEF /* Internlm2.swift in Sources */,
 				34899D84306757F400089BEF /* Tokenizer.swift in Sources */,
@@ -772,12 +804,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+		346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift";
 			requirement = {
 				kind = revision;
 				revision = bccf312af65b59e67b40d63afd89e46e0d3fae61;
+			};
+		};
+		347C1CC8306E0EA000DF2C88 /* XCRemoteSwiftPackageReference "openmp-mobile" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/DeveloperMindset-com/openmp-mobile";
+			requirement = {
+				kind = revision;
+				revision = 06ebe6ac77da8e50557bfe5a5bca5a8acc7678b1;
 			};
 		};
 		34899D4430672AC800089BEF /* XCRemoteSwiftPackageReference "SwiftWhisper" */ = {
@@ -795,6 +835,8 @@
 				kind = exactVersion;
 				version = 1.3.4;
 			};
+			traits = (
+			);
 		};
 		34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -809,8 +851,13 @@
 /* Begin XCSwiftPackageProductDependency section */
 		346AE8D5306B6A4E003F3E36 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			package = 346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB" */;
 			productName = GRDB;
+		};
+		347C1CC9306E0EA000DF2C88 /* OpenMP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 347C1CC8306E0EA000DF2C88 /* XCRemoteSwiftPackageReference "openmp-mobile" */;
+			productName = OpenMP;
 		};
 		34899D4530672AC800089BEF /* SwiftWhisper */ = {
 			isa = XCSwiftPackageProductDependency;

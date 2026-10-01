@@ -81,3 +81,5 @@ ios/Models/ggml-tiny.bin
 lib
 
 .env
+
+ios/faiss.xcframework/

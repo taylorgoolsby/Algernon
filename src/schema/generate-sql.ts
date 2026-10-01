@@ -5,6 +5,7 @@ import fs from 'fs'
 import * as Message from './Message/MessageSchema'
 import * as Completion from './Completion/CompletionSchema'
 import * as ShortTermMemory from './ShortTermMemory/ShortTermMemorySchema'
+import * as Annotation from './Annotation/AnnotationSchema'
 
 const {
   sqlDirectiveTypeDefs,
@@ -33,6 +34,7 @@ const typeDefs = gql`
   ${Message.typeDefs}
   ${Completion.typeDefs}
   ${ShortTermMemory.typeDefs}
+  ${Annotation.typeDefs}
 `
 
 const sql = generateSql({typeDefs: [typeDefs, sqlDirectiveTypeDefs]}, {
