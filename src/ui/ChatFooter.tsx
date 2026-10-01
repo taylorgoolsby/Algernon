@@ -21,6 +21,7 @@ const ChatFooter = () => {
         height: 50 + safeAreaInsets.bottom
       }]} 
       behavior={'position'}
+      keyboardVerticalOffset={-safeAreaInsets.bottom}
     >
     <BlurView style={{
       flex: 1,
