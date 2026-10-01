@@ -73,7 +73,7 @@ class ChatStore {
   };
 
   async load() {
-    await ChatStore.loadModel();
+    ChatStore.loadModel();
 
     limit = INITIAL_LIMIT
     const lastMessage = await MessageInterface.getLast(this.windowId)
