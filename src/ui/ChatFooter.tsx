@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import {View, TextInput, StyleSheet, KeyboardAvoidingView, Dimensions, TouchableOpacity } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {BlurView} from '@react-native-community/blur'
-import Colors from './Colors'
+import Colors from '../Colors'
 import { chatStore } from '../store/ChatStore';
 
 const screenWidth = Dimensions.get('window').width
@@ -37,9 +37,8 @@ const ChatFooter = () => {
         onChangeText={setValue}
         onSubmitEditing={({ nativeEvent }) => {
           const text = nativeEvent.text;
-          chatStore.onSubmit(text, 'user')
+          chatStore.submitMessage(text)
           setValue('')
-          
         }}
       />
     </BlurView>

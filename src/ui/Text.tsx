@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {StyleSheet, Text} from "react-native";
-import Colors from "./Colors";
+import Colors from "../Colors";
 
 const MyText: any = (props: any) => {
   const {

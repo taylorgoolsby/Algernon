@@ -3,11 +3,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { Ionicons } from '@react-native-vector-icons/ionicons/static'
-import Colors from "./Colors";
+import Colors from "../Colors";
 import { BlurView } from "@react-native-community/blur";
+import { MessageRole, MessageSQL } from "../schema/Message/MessageSchema";
 
 type ProfilePicProps = {
-  message: any,
+  message: MessageSQL,
   noBorder?: boolean,
   isActive?: boolean,
   tenX?: boolean,
@@ -151,7 +152,7 @@ const ProfilePic = (props: ProfilePicProps): any => {
 
   const timeout = useRef<any>(null)
   useEffect(() => {
-    if (message.role === 'assistant') {
+    if (message.role === MessageRole.ASSISTANT) {
       // A step must render first before queueing another step.
       // So setTimeout is called in a render, not at the end of the step function.
       // This prevents the event queue from being filled with step calls,
@@ -181,7 +182,7 @@ const ProfilePic = (props: ProfilePicProps): any => {
     height: 24 * t,
   }
 
-  if (message.role === 'user') {
+  if (message.role === MessageRole.USER) {
     // return (
     //   <Image
     //     style={{

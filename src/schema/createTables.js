@@ -1,0 +1,29 @@
+export default `CREATE TABLE IF NOT EXISTS \`Message\` (
+  \`messageId\` INTEGER PRIMARY KEY AUTOINCREMENT,
+  \`windowId\` INTEGER NOT NULL DEFAULT 0,
+  \`promptedByMessageId\` INTEGER NULL,
+  \`role\` TEXT NOT NULL,
+  \`text\` TEXT NOT NULL,
+  \`completed\` INTEGER NOT NULL DEFAULT 0,
+  \`deleted\` INTEGER NOT NULL DEFAULT 0,
+  \`dateUpdated\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  \`dateCreated\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS \`Completion\` (
+  \`completionId\` INTEGER PRIMARY KEY AUTOINCREMENT,
+  \`type\` TEXT NOT NULL,
+  \`model\` TEXT NOT NULL,
+  \`inputs\` TEXT NOT NULL,
+  \`output\` TEXT NOT NULL,
+  \`dateCreated\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS \`ShortTermMemory\` (
+  \`shortTermMemoryId\` INTEGER PRIMARY KEY AUTOINCREMENT,
+  \`windowId\` INTEGER NOT NULL DEFAULT 0,
+  \`model\` TEXT NOT NULL,
+  \`inputs\` TEXT NOT NULL,
+  \`summary\` TEXT NOT NULL,
+  \`dateCreated\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);`

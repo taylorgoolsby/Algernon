@@ -6,7 +6,7 @@ export type ChatCompletionsResponse = {
     index?: number,
     delta?: {
       content: string,
-      tool_calls: Array<{
+      tool_calls?: Array<{
         id: string,
         type: string,
         function: {

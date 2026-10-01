@@ -50,14 +50,14 @@ const ChatScrollView = observer(() => {
           paddingLeft: 16,
           paddingRight: 16,
         }}
-        data={chatStore.messages}
-        extraData={chatStore.messages.map(message => message.content)}
+        data={chatStore.displayedMessageIds}
+        extraData={chatStore.displayedMessageIds.map(messageId => chatStore.messages[messageId]?.text)}
         renderItem={({ item }) => {
           return (
-            <ChatItem message={item} />
+            <ChatItem message={chatStore.messages[item]} />
           )
         }}
-        keyExtractor={item => item.messageId.toString()}
+        keyExtractor={item => item}
       />
     </KeyboardAvoidingView>
   );

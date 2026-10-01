@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, StyleSheet } from 'react-native';
-import Colors from "./Colors";
+import Colors from "../Colors";
 
 
 const Spinner = ({style, dieOut, onLayout}: any): any => {

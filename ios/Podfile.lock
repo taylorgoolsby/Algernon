@@ -1268,6 +1268,30 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - react-native-config (1.7.2):
+    - react-native-config/App (= 1.7.2)
+  - react-native-config/App (1.7.2):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - react-native-safe-area-context (5.10.0):
     - hermes-engine
     - RCTRequired
@@ -1696,6 +1720,30 @@ PODS:
     - React-utils (= 0.87.1)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.87.1)
+  - RNFS (2.20.0):
+    - React-Core
+  - RNReactNativeHapticFeedback (3.0.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - RNScreens (4.28.0):
     - hermes-engine
     - RCTRequired
@@ -1798,6 +1846,7 @@ DEPENDENCIES:
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - React-mutationobservernativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
+  - react-native-config (from `../node_modules/react-native-config`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-vector-icons-ionicons (from `../node_modules/@react-native-vector-icons/ionicons`)"
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -1836,6 +1885,8 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios/ReactCodegen`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
+  - RNFS (from `../node_modules/react-native-fs`)
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - SocketRocket (from `build/rndeps-facades/SocketRocket`)
   - Yoga (from `build/rncore-facades/Yoga`)
@@ -1938,6 +1989,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver"
   react-native-blur:
     :path: "../node_modules/@react-native-community/blur"
+  react-native-config:
+    :path: "../node_modules/react-native-config"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-vector-icons-ionicons:
@@ -2014,6 +2067,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeDependencies:
     :podspec: "../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   SocketRocket:
@@ -2070,6 +2127,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: aa3ea1db91e208694042bd8af0bda65202f4a68d
   React-mutationobservernativemodule: 2dcf0e333fe6621c3ffea838fcc48d54435724a1
   react-native-blur: 8fade3c195ce83cfa6578e3e77b01bbcf935a8e1
+  react-native-config: 1f8b53731b01fef64f9908297d23867691e68dfc
   react-native-safe-area-context: d31381d291323aff31330587eaac543dabd0e258
   react-native-vector-icons-ionicons: cc4bfc451b5d5c61d3c91e05f5a65c097dd0e5cb
   React-NativeModulesApple: 885f4cd7626a1ffe20e0dcd23ef8528f415795d3
@@ -2108,6 +2166,8 @@ SPEC CHECKSUMS:
   ReactCodegen: 35b96d81c5528b5774f73e938ce4be8eb879d7bd
   ReactCommon: 7d2d036b7250e66dce71d19f47160d4b31fbb92a
   ReactNativeDependencies: 94c922c39e0e6150ee9ad05e2ca1946e0ef55783
+  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
+  RNReactNativeHapticFeedback: a2e36298f8e446b677488539e247deaa91d51103
   RNScreens: b156e2601e24bf64c2a7325fd033e2bcc221ef55
   SocketRocket: d57b1af80c029e12a75cd9b218287c67381e4593
   Yoga: 58b502c52b14ad3c4468805d461fc37d275c2a42

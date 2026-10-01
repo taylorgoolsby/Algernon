@@ -9,28 +9,32 @@ import Colors, {
   userText2,
   aiText2Active,
   aiText2,
-} from './Colors';
+} from '../Colors';
 import Text from './Text';
 import Markdown from 'react-native-markdown-display';
 import ProfilePic from './ProfilePic';
 import { Ionicons } from '@react-native-vector-icons/ionicons/static';
 import Spinner from './Spinner';
-import type { Message } from '../store/ChatStore';
+import { MessageRole, type MessageSQL } from "../schema/Message/MessageSchema";
 
 const screenWidth = Dimensions.get('window').width;
 
 type ChatItemProps = {
-  message: Message
+  message: MessageSQL | null | undefined
 };
 
 const ChatItem = (props: ChatItemProps) => {
-  const { name, content, role } = props.message;
+  if (!props.message) return
+
+  const { text, role } = props.message;
+
+  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor'
 
   return (
     <View
       style={[
         styles.container,
-        role === 'assistant' ? styles.assistant : styles.user,
+        role === MessageRole.ASSISTANT ? styles.assistant : styles.user,
       ]}
     >
       <ProfileRow {...props} />
@@ -41,13 +45,17 @@ const ChatItem = (props: ChatItemProps) => {
 };
 
 const ProfileRow = (props: ChatItemProps) => {
-  const { name, content, role, messageId } = props.message;
+  if (!props.message) return
+
+  const { text, role, messageId } = props.message;
+
+  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor'
 
   return (
     <View style={styles.profileRow}>
-      <ProfilePic message={{ role, messageId }} />
+      <ProfilePic message={props.message} />
       <Text
-        style={role === 'assistant' ? styles.assistantText : styles.userText}
+        style={role === MessageRole.ASSISTANT ? styles.assistantText : styles.userText}
       >
         {name}
       </Text>
@@ -56,9 +64,13 @@ const ProfileRow = (props: ChatItemProps) => {
 };
 
 const Message = (props: ChatItemProps) => {
-  const { name, content, role } = props.message;
+  if (!props.message) return
 
-  return !!content ? (
+  const { text, role, messageId } = props.message;
+
+  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor'
+
+  return !!text ? (
     <View style={{
       marginTop: -8,
       marginBottom: -8,
@@ -69,7 +81,7 @@ const Message = (props: ChatItemProps) => {
           body: { color: 'white', fontFamily: Colors.fontFamily, fontWeight: Colors.fontWeight },
         }}
       >
-        {content.trim()}
+        {text.trim()}
       </Markdown>
     </View>
   ) : (
@@ -78,7 +90,11 @@ const Message = (props: ChatItemProps) => {
 };
 
 const Controls = (props: ChatItemProps) => {
-  const { name, content, role } = props.message;
+  if (!props.message) return
+
+  const { text, role, messageId } = props.message;
+
+  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor'
 
   const [isConfirming, setIsConfirming] = useState(false);
 
@@ -99,7 +115,7 @@ const Controls = (props: ChatItemProps) => {
           name={'close-outline'}
           size={18}
           color={
-            role === 'user'
+            role === MessageRole.USER
               ? isConfirming
                 ? userText2Active
                 : userText2

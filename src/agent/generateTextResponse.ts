@@ -1,9 +1,9 @@
 // @flow
 
 import { NativeEventEmitter, NativeModules } from 'react-native';
-import type {ChatCompletionsResponse} from "../types/ChatCompletion.js";
-import type { ModelConfig } from "../types/ModelConfig.js";
-import type { GPTMessage } from "../types/GPTMessage.js";
+import type {ChatCompletionsResponse} from "../types/ChatCompletion";
+import type { ModelConfig } from "../types/ModelConfig";
+import type { GPTMessage } from "../types/GPTMessage";
 
 // Get the LLMNativeModule from NativeModules
 const { LLMNativeModule } = NativeModules;
@@ -25,22 +25,13 @@ const setupTokenListener = (callback: (output: string) => void) => {
 };
 
 // Function to stream response from on-device generation
-// @ts-ignore
-let onDeviceStreamingQueue = [];
+let onDeviceStreamingQueue: Array<() => Promise<void>> = [];
 let isOnDeviceStreaming = false;
 async function streamOnDevice(
   input: Array<GPTMessage>,
   callback: (output: ChatCompletionsResponse) => void,
-  options?: {jsonMode: boolean},
+  options?: {jsonMode: boolean} | null | undefined,
 ): Promise<void> {
-  try {
-    // Load the model and wait for the promise to resolve
-    await LLMNativeModule.loadModel();
-    console.warn('Model loaded successfully!');
-  } catch (error) {
-    console.error('Error loading model:', error);
-  }
-
   if (input[input.length - 1].role !== 'user') {
     throw new Error('The last message in the input should be from the user');
   }
@@ -58,7 +49,7 @@ async function streamOnDevice(
     }
   }).join('\n') + '<|start_header_id|>assistant<|end_header_id|>\n\n' //+ (options?.jsonMode ? '[' : '');
 
-  let finishReason = 'stop'; // Variable to track if we've hit a stop condition
+  let finishReason: 'stop' | 'length' | 'content_filter' | 'tool_calls' | null = null; // Variable to track if we've hit a stop condition
 
   console.log("inputString", inputString);
 
@@ -71,12 +62,12 @@ async function streamOnDevice(
       return
     }
 
-    console.log("response", response);
+    // console.log("response", response);
 
     const delta = response.slice(lastResponse.length)
     lastResponse = response
 
-    const event = {
+    const event: ChatCompletionsResponse = {
       id: 'on-device-response', // Mock ID
       choices: [{
         index: 0,
@@ -95,7 +86,6 @@ async function streamOnDevice(
       },
     };
 
-    // @ts-ignore
     callback(event);
   });
 
@@ -105,9 +95,9 @@ async function streamOnDevice(
   // Clean up listener when the generation is done
   listener.remove();
 
-  console.log("lastResponse", lastResponse);
+  // console.log("lastResponse", lastResponse);
 
-  const event = {
+  const event: ChatCompletionsResponse = {
     id: 'on-device-response', // Mock ID
     choices: [{
       index: 0,
@@ -126,26 +116,19 @@ async function streamOnDevice(
     },
   };
 
-  // @ts-ignore
   callback(event);
 }
 
 export async function syncTextResponse(
   model: ModelConfig,
-  input: string,
-  options?: {jsonMode: boolean},
+  input: Array<GPTMessage>,
+  options?: {jsonMode: boolean} | null | undefined,
 ): Promise<ChatCompletionsResponse> {
-  const onDeviceStreamingTask = () => {
+  const onDeviceStreamingTask: () => Promise<ChatCompletionsResponse> = () => {
     return new Promise((resolve, reject) => {
       let buffer = ''; // To store the full response
 
-      streamTextResponse(
-        model, 
-        // @ts-ignore
-        input, 
-        options, 
-        // @ts-ignore
-        (output) => {
+      streamTextResponse(model, input, (output) => {
         const { choices } = output;
 
         // Accumulate the tokens in buffer
@@ -154,7 +137,7 @@ export async function syncTextResponse(
         // Check if the stream has finished
         if (choices[0].finish_reason !== null) {
           // Construct the OpenAI-like API response
-          const apiResponse = {
+          const apiResponse: ChatCompletionsResponse = {
             id: output.id,
             object: 'chat.completion',
             created: output.created || Date.now(),
@@ -180,18 +163,16 @@ export async function syncTextResponse(
           resolve(apiResponse);
           runNextOnDeviceStreamingTask()
         }
-      });
+      }, options);
     });
   }
 
   if (!isOnDeviceStreaming) {
     isOnDeviceStreaming = true;
-    // @ts-ignore
     return await onDeviceStreamingTask()
   } else {
     return new Promise((resolve) => {
       onDeviceStreamingQueue.push(async () => {
-        // @ts-ignore
         resolve(await onDeviceStreamingTask())
       })
     })
@@ -204,7 +185,6 @@ function runNextOnDeviceStreamingTask() {
 
   // If there are more iterations queued, dequeue and run the next one
   if (onDeviceStreamingQueue.length > 0) {
-    // @ts-ignore
     const nextTask = onDeviceStreamingQueue.shift();
     if (nextTask) {
       isOnDeviceStreaming = true;
@@ -218,10 +198,9 @@ export function streamTextResponse(
   model: ModelConfig,
   input: Array<GPTMessage>,
   callback: (output: ChatCompletionsResponse) => void,
-  options?: {jsonMode: boolean},
-): void {
-  // @ts-ignore
-  return streamOnDevice(input, options, callback)
+  options?: {jsonMode: boolean} | null,
+): Promise<void> {
+  return streamOnDevice(input, callback, options)
 }
 
 // Resolves when generation is complete. Use onResponse for streamed updates.

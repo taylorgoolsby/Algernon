@@ -1,5 +1,18 @@
 {
   "extends": "@react-native/typescript-config",
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["**/node_modules", "**/Pods"]
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": "src",
+    "outDir": "lib",
+    "noEmit": false,
+    "rewriteRelativeImportExtensions": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node", "@types/lodash.debounce"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js"],
+  "exclude": ["node_modules", "Pods", "__tests__"]
 }

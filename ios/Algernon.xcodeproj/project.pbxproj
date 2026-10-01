@@ -10,6 +10,10 @@
 		0C80B921A6F3F58F76C31292 /* libPods-Algernon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-Algernon.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		345C697E3065007B003C6225 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C697D30650075003C6225 /* SceneDelegate.swift */; };
+		346AE8D6306B6A4E003F3E36 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 346AE8D5306B6A4E003F3E36 /* GRDB */; };
+		346AE8DA306B6BB0003F3E36 /* DatabaseModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 346AE8D8306B6BB0003F3E36 /* DatabaseModule.m */; };
+		346AE8DB306B6BB0003F3E36 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346AE8D7306B6BB0003F3E36 /* DatabaseManager.swift */; };
+		346AE8DC306B6BB0003F3E36 /* DatabaseModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346AE8D9306B6BB0003F3E36 /* DatabaseModule.swift */; };
 		34899D2A306727DB00089BEF /* TextFeatureExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = 34899D28306727DB00089BEF /* TextFeatureExtractor.m */; };
 		34899D2B306727DB00089BEF /* TextFeatureExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D29306727DB00089BEF /* TextFeatureExtractor.swift */; };
 		34899D3A3067282100089BEF /* BertTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34899D303067282100089BEF /* BertTokenizer.swift */; };
@@ -77,6 +81,9 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Algernon/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Algernon/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		345C697D30650075003C6225 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		346AE8D7306B6BB0003F3E36 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		346AE8D8306B6BB0003F3E36 /* DatabaseModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseModule.m; sourceTree = "<group>"; };
+		346AE8D9306B6BB0003F3E36 /* DatabaseModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseModule.swift; sourceTree = "<group>"; };
 		34899D28306727DB00089BEF /* TextFeatureExtractor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextFeatureExtractor.m; sourceTree = "<group>"; };
 		34899D29306727DB00089BEF /* TextFeatureExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFeatureExtractor.swift; sourceTree = "<group>"; };
 		34899D2E306727E100089BEF /* Algernon-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Algernon-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -142,6 +149,7 @@
 				34899D5A3067574500089BEF /* Tokenizers in Frameworks */,
 				34899D5C3067574500089BEF /* Transformers in Frameworks */,
 				34899D8E3067585000089BEF /* MLXFFT in Frameworks */,
+				346AE8D6306B6A4E003F3E36 /* GRDB in Frameworks */,
 				0C80B921A6F3F58F76C31292 /* libPods-Algernon.a in Frameworks */,
 				34899D963067585000089BEF /* MLXOptimizers in Frameworks */,
 				34899D983067585000089BEF /* MLXRandom in Frameworks */,
@@ -172,6 +180,9 @@
 				34899D2E306727E100089BEF /* Algernon-Bridging-Header.h */,
 				34899D4730673E0200089BEF /* LLMNativeModule.m */,
 				34899D4830673E0200089BEF /* LLMNativeModule.swift */,
+				346AE8D7306B6BB0003F3E36 /* DatabaseManager.swift */,
+				346AE8D8306B6BB0003F3E36 /* DatabaseModule.m */,
+				346AE8D9306B6BB0003F3E36 /* DatabaseModule.swift */,
 			);
 			name = Algernon;
 			sourceTree = "<group>";
@@ -327,6 +338,7 @@
 				34899D933067585000089BEF /* MLXNN */,
 				34899D953067585000089BEF /* MLXOptimizers */,
 				34899D973067585000089BEF /* MLXRandom */,
+				346AE8D5306B6A4E003F3E36 /* GRDB */,
 			);
 			productName = Algernon;
 			productReference = 13B07F961A680F5B00A75B9A /* Algernon.app */;
@@ -358,6 +370,7 @@
 				34899D4430672AC800089BEF /* XCRemoteSwiftPackageReference "SwiftWhisper" */,
 				34899D563067574500089BEF /* XCRemoteSwiftPackageReference "swift-transformers" */,
 				34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */,
+				346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
 			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
@@ -482,6 +495,9 @@
 				34899D4A30673E0200089BEF /* LLMNativeModule.swift in Sources */,
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
 				34899D2A306727DB00089BEF /* TextFeatureExtractor.m in Sources */,
+				346AE8DA306B6BB0003F3E36 /* DatabaseModule.m in Sources */,
+				346AE8DB306B6BB0003F3E36 /* DatabaseManager.swift in Sources */,
+				346AE8DC306B6BB0003F3E36 /* DatabaseModule.swift in Sources */,
 				34899D2B306727DB00089BEF /* TextFeatureExtractor.swift in Sources */,
 				34899D3A3067282100089BEF /* BertTokenizer.swift in Sources */,
 				34899D75306757F400089BEF /* Gemma.swift in Sources */,
@@ -756,6 +772,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift";
+			requirement = {
+				kind = revision;
+				revision = bccf312af65b59e67b40d63afd89e46e0d3fae61;
+			};
+		};
 		34899D4430672AC800089BEF /* XCRemoteSwiftPackageReference "SwiftWhisper" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/exPHAT/SwiftWhisper.git";
@@ -783,6 +807,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		346AE8D5306B6A4E003F3E36 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
 		34899D4530672AC800089BEF /* SwiftWhisper */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 34899D4430672AC800089BEF /* XCRemoteSwiftPackageReference "SwiftWhisper" */;
