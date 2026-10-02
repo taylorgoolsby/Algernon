@@ -77,7 +77,6 @@ class ChatStore {
 
     limit = INITIAL_LIMIT
     const lastMessage = await MessageInterface.getLast(this.windowId)
-    console.log('lastMessage', lastMessage)
     if (!lastMessage) return
     this.offset = lastMessage.messageId // this offset will return nothing.
     this.offset -= limit // now the return from this offset will include the last message.
@@ -98,8 +97,6 @@ class ChatStore {
       this.messages[message.messageId.toString()] = message
     }
     this.loaded = true
-
-    console.log("this.displayedMessageIds", this.displayedMessageIds);
   }
 
   setDisplayedMessageIds = (displayedMessageIds: Array<string>) => {
@@ -144,7 +141,6 @@ class ChatStore {
   }
 
   appendMessage: (output: AppendMessageOutput) => void = (output: AppendMessageOutput) => {
-    console.log("output", output);
     this.displayedMessageIds = [...this.displayedMessageIds, output.message.messageId.toString()]
     this.messages[output.message.messageId.toString()] = output.message
     this.hapticFeedback()

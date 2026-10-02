@@ -2,8 +2,6 @@
 
 import RNConfig from "react-native-config";
 
-console.log("RNConfig.EXA_SECRET", RNConfig.EXA_SECRET);
-
 export default class Config {
   // $FlowFixMe
   static stage: string = __DEV__ ? 'debug' : 'release';

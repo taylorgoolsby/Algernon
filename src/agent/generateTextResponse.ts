@@ -51,7 +51,7 @@ async function streamOnDevice(
 
   let finishReason: 'stop' | 'length' | 'content_filter' | 'tool_calls' | null = null; // Variable to track if we've hit a stop condition
 
-  console.log("inputString", inputString);
+  // console.log("inputString", inputString);
 
   // Set up the listener for token generation
   let lastResponse = ''
@@ -244,8 +244,8 @@ export default async function generateTextResponse(input: Array<GPTMessage>, onR
 
   listener.remove();
 
-  console.log("inputString", inputString);
-  console.log("lastResponse", lastResponse);
+  // console.log("inputString", inputString);
+  // console.log("lastResponse", lastResponse);
 
   return lastResponse
 }
