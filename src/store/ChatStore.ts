@@ -163,12 +163,12 @@ class ChatStore {
   }
 
   // await chatStore.deleteMessage(message.messageId)
-  deleteMessage: (arg0: number) => Promise<void> = async (messageId: number): Promise<void> => {
+  deleteMessage: (messageId: number) => Promise<void> = async (messageId: number): Promise<void> => {
     // todo: delete annotations from faiss
     await MessageInterface.softDelete(messageId)
     const message = await MessageInterface.get(this.windowId, messageId)
     // $FlowFixMe
-    this.messages[messageId.toString()] = message
+    this.messages[messageId.toString()] = null
   }
 
 //   onSubmit(text: string, role: string) {

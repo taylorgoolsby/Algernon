@@ -61,7 +61,7 @@ export default class MessageInterface {
       SELECT * 
       FROM Message
       WHERE windowId = ${windowId}
-      -- AND deleted = 0
+      AND deleted = 0
       ORDER BY messageId ASC
       LIMIT ${limit}
       OFFSET ${offset};

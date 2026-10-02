@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import Colors, {
   userChat,
   aiChat,
@@ -16,6 +16,7 @@ import ProfilePic from './ProfilePic';
 import { Ionicons } from '@react-native-vector-icons/ionicons/static';
 import Spinner from './Spinner';
 import { MessageRole, type MessageSQL } from "../schema/Message/MessageSchema";
+import { chatStore } from '../store/ChatStore';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -90,17 +91,45 @@ const Message = (props: ChatItemProps) => {
 };
 
 const Controls = (props: ChatItemProps) => {
-  if (!props.message) return
-
-  const { text, role, messageId } = props.message;
-
-  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor'
-
+  // Hooks must run before any early return
   const [isConfirming, setIsConfirming] = useState(false);
+
+  if (!props.message) return null;
+
+  const { role, messageId } = props.message;
+
+  const handleDelete = () => {
+    setIsConfirming(true);
+
+    Alert.alert(
+      'Delete message?',
+      'This message will be permanently deleted.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: () => setIsConfirming(false),
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            setIsConfirming(false);
+            chatStore.deleteMessage(messageId);
+          },
+        },
+      ],
+      {
+        cancelable: true, // Android: tapping outside / back button dismisses
+        onDismiss: () => setIsConfirming(false),
+      }
+    );
+  };
 
   return (
     <View style={styles.controls}>
       <TouchableOpacity
+        onPress={handleDelete}
         style={{
           width: 32,
           height: 32,
@@ -108,7 +137,6 @@ const Controls = (props: ChatItemProps) => {
           alignItems: 'center',
           marginRight: -5,
           marginBottom: -5,
-          // backgroundColor: 'red'
         }}
       >
         <Ionicons
