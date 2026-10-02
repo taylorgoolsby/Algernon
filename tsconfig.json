@@ -11,7 +11,8 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node", "@types/lodash.debounce"]
+    "types": ["node", "@types/lodash.debounce"],
+    "jsx": "react-native"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js"],
   "exclude": ["node_modules", "Pods", "__tests__"]

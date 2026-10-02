@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   TextInput,
@@ -9,9 +9,10 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from '@react-native-community/blur';
-import Colors, {footerActive, footerInactive} from '../Colors';
+import Colors, { footerActive, footerInactive } from '../Colors';
 import { chatStore } from '../store/ChatStore';
 import { Ionicons } from '@react-native-vector-icons/ionicons/static';
+import MicButton from './MicButton';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -21,6 +22,12 @@ const ChatFooter = () => {
   const safeAreaInsets = useSafeAreaInsets();
 
   const [value, setValue] = useState('');
+  const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
+
+  const handleTranscriptionComplete = (text: string) => {
+    setValue(text);
+    inputRef.current?.focus();
+  };
 
   return (
     <KeyboardAvoidingView
@@ -49,8 +56,6 @@ const ChatFooter = () => {
           <TouchableOpacity>
             <Ionicons
               style={{
-                // width: 20,
-                // height: 20,
                 marginTop: 0,
                 marginLeft: 23,
               }}
@@ -60,6 +65,7 @@ const ChatFooter = () => {
             />
           </TouchableOpacity>
           <TextInput
+            ref={inputRef}
             style={styles.input}
             placeholder={searchMode ? 'Search' : 'Message'}
             placeholderTextColor={Colors.sendIconDisabledBg}
@@ -72,19 +78,7 @@ const ChatFooter = () => {
               setValue('');
             }}
           />
-          <TouchableOpacity>
-            <Ionicons
-              style={{
-                // width: 20,
-                // height: 20,
-                marginTop: 0,
-                marginRight: 23,
-              }}
-              name={'mic'}
-              size={24}
-              color={footerInactive}
-            />
-          </TouchableOpacity>
+          <MicButton onTranscriptionComplete={handleTranscriptionComplete} />
         </View>
       </BlurView>
     </KeyboardAvoidingView>
@@ -99,15 +93,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 1,
     flexDirection: 'row',
-    // backgroundColor: 'blue',
-    // width: 50,
   },
   input: {
     flex: 1,
     height: 50,
-    // alignSelf: 'stretch',
     color: Colors.inputText,
-    // backgroundColor: 'pink',
     paddingTop: 0,
     marginLeft: 8,
     marginRight: 8,
