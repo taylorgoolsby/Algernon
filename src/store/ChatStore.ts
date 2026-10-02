@@ -77,7 +77,9 @@ class ChatStore {
 
     limit = INITIAL_LIMIT
     const lastMessage = await MessageInterface.getLast(this.windowId)
+    console.log('lastMessage', lastMessage)
     if (!lastMessage) return
+    limit = lastMessage.messageId
     this.offset = lastMessage.messageId // this offset will return nothing.
     this.offset -= limit // now the return from this offset will include the last message.
     if (this.offset < 0) {
@@ -88,6 +90,9 @@ class ChatStore {
     this.completedOffsets = {}
     // $FlowFixMe
     this.completedOffsets[this.offset.toString()] = true
+
+    // console.log('this.offset', this.offset)
+    // console.log('limit', limit)
 
     const messages = await MessageInterface.getOffsetLimit(this.windowId, this.offset, limit)
     this.setDisplayedMessageIds(messages.map(message => message.messageId.toString()))

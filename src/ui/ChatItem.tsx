@@ -81,6 +81,16 @@ const Message = (props: ChatItemProps) => {
 
   const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor';
 
+  let content = text
+  try {
+    // todo:
+    // for some reason the DB returns \\n even though it inserts \n.
+    // here we parse it if possible just in case.
+    content = JSON.parse(`"${text}"`)
+  } catch (error) {
+    // console.error(error)
+  }
+
   return !!text ? (
     <View
       style={{
@@ -98,7 +108,7 @@ const Message = (props: ChatItemProps) => {
           },
         }}
       >
-        {text.trim()}
+        {content.trim()}
       </Markdown>
     </View>
   ) : (

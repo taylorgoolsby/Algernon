@@ -138,6 +138,7 @@ export default class MessageInterface {
     messageId: number,
     text: string,
   ): Promise<any> {
+    console.log('text', text)
     const query = sqltag`
       UPDATE Message SET
         completed = 1,
