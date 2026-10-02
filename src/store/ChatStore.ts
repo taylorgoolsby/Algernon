@@ -169,6 +169,7 @@ class ChatStore {
     const message = await MessageInterface.get(this.windowId, messageId)
     // $FlowFixMe
     this.messages[messageId.toString()] = null
+    this.displayedMessageIds = this.displayedMessageIds.filter(id => id !== messageId.toString())
   }
 
 //   onSubmit(text: string, role: string) {
