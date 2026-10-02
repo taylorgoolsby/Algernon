@@ -37,6 +37,7 @@ export default class MessageInterface {
       SELECT * 
       FROM Message
       WHERE windowId = ${windowId}
+      AND deleted = 0
       ORDER BY messageId DESC
       LIMIT 1;
     `
@@ -49,7 +50,7 @@ export default class MessageInterface {
       SELECT * 
       FROM Message
       WHERE windowId = ${windowId}
-      -- AND deleted = 0
+      AND deleted = 0
       ORDER BY messageId ${raw(order ?? 'ASC')};
     `
     const rows = await database.query(sql)

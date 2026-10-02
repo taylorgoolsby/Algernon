@@ -73,10 +73,11 @@ class ChatStore {
   };
 
   async load() {
-    ChatStore.loadModel();
+    await ChatStore.loadModel();
 
     limit = INITIAL_LIMIT
     const lastMessage = await MessageInterface.getLast(this.windowId)
+    console.log('lastMessage', lastMessage)
     if (!lastMessage) return
     this.offset = lastMessage.messageId // this offset will return nothing.
     this.offset -= limit // now the return from this offset will include the last message.
@@ -110,6 +111,26 @@ class ChatStore {
       chatStore.windowId,
       preferencesStore.selectedModel,
       input.trim(),
+      output => {
+        chatStore.appendMessage(output)
+      },
+      output => {
+        chatStore.updateMessage(output)
+      },
+      error => {
+        console.error(error)
+      },
+    )
+  }
+
+  // messageId of the user message to regenerate off of.
+  regenerateResponse = async (messageId: string) => {
+    const message = this.messages[messageId]
+    if (!message) return
+    await ChatIteration.queueRegeneration(
+      chatStore.windowId,
+      preferencesStore.selectedModel,
+      message,
       output => {
         chatStore.appendMessage(output)
       },

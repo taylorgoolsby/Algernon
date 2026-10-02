@@ -60,8 +60,48 @@ export default class ChatIteration {
       }
 
     } catch (error) {
-      // @ts-ignore
-      onError(error);
+      onError(error as Error);
+    }
+  }
+
+  static async queueRegeneration(
+    windowId: number,
+    model: ModelConfig,
+    userMessage: MessageSQL,
+    onAppendMessage: (output: AppendMessageOutput) => any,
+    onUpdateMessage: (output: UpdateMessageOutput) => any,
+    onError: (error: Error) => any,
+  ) {
+    try {
+      const emptyResponse = await MessageInterface.insert(
+        windowId,
+        MessageRole.ASSISTANT,
+        '',
+        userMessage.messageId,
+        false
+      )
+      const output: AppendMessageOutput = {
+        windowId,
+        message: emptyResponse,
+      }
+      onAppendMessage(output)
+
+      // Create an iteration task (a function) that runs `iterate`
+      const iterationTask = () => {
+        ChatIteration.iterate(windowId, model, userMessage.text, onAppendMessage, onUpdateMessage, onError, userMessage, emptyResponse);
+      };
+
+      // Check if an iteration is currently running
+      if (!this.isIterationRunning) {
+        // If no iteration is running, execute the task immediately
+        this.isIterationRunning = true;
+        iterationTask();
+      } else {
+        // If an iteration is already running, queue this task
+        this.iterationQueue.push(iterationTask);
+      }
+    } catch (error) {
+      onError(error as Error)
     }
   }
 

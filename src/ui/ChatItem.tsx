@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import Colors, {
   userChat,
   aiChat,
@@ -15,21 +21,21 @@ import Markdown from 'react-native-markdown-display';
 import ProfilePic from './ProfilePic';
 import { Ionicons } from '@react-native-vector-icons/ionicons/static';
 import Spinner from './Spinner';
-import { MessageRole, type MessageSQL } from "../schema/Message/MessageSchema";
+import { MessageRole, type MessageSQL } from '../schema/Message/MessageSchema';
 import { chatStore } from '../store/ChatStore';
 
 const screenWidth = Dimensions.get('window').width;
 
 type ChatItemProps = {
-  message: MessageSQL | null | undefined
+  message: MessageSQL | null | undefined;
 };
 
 const ChatItem = (props: ChatItemProps) => {
-  if (!props.message) return
+  if (!props.message) return;
 
   const { text, role } = props.message;
 
-  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor'
+  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor';
 
   return (
     <View
@@ -46,17 +52,21 @@ const ChatItem = (props: ChatItemProps) => {
 };
 
 const ProfileRow = (props: ChatItemProps) => {
-  if (!props.message) return
+  if (!props.message) return;
 
   const { text, role, messageId } = props.message;
 
-  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor'
+  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor';
 
   return (
     <View style={styles.profileRow}>
       <ProfilePic message={props.message} />
       <Text
-        style={role === MessageRole.ASSISTANT ? styles.assistantText : styles.userText}
+        style={
+          role === MessageRole.ASSISTANT
+            ? styles.assistantText
+            : styles.userText
+        }
       >
         {name}
       </Text>
@@ -65,21 +75,27 @@ const ProfileRow = (props: ChatItemProps) => {
 };
 
 const Message = (props: ChatItemProps) => {
-  if (!props.message) return
+  if (!props.message) return;
 
   const { text, role, messageId } = props.message;
 
-  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor'
+  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor';
 
   return !!text ? (
-    <View style={{
-      marginTop: -8,
-      marginBottom: -8,
-      marginLeft: 2
-    }}>
+    <View
+      style={{
+        marginTop: -8,
+        marginBottom: -8,
+        marginLeft: 2,
+      }}
+    >
       <Markdown
         style={{
-          body: { color: 'white', fontFamily: Colors.fontFamily, fontWeight: Colors.fontWeight },
+          body: {
+            color: 'white',
+            fontFamily: Colors.fontFamily,
+            fontWeight: Colors.fontWeight,
+          },
         }}
       >
         {text.trim()}
@@ -122,12 +138,31 @@ const Controls = (props: ChatItemProps) => {
       {
         cancelable: true, // Android: tapping outside / back button dismisses
         onDismiss: () => setIsConfirming(false),
-      }
+      },
     );
   };
 
+  const isLast = chatStore.displayedMessageIds[chatStore.displayedMessageIds.length - 1] === messageId.toString()
+
   return (
     <View style={styles.controls}>
+      {role === MessageRole.USER && isLast ? (<TouchableOpacity
+        onPress={() => chatStore.regenerateResponse(messageId.toString())}
+        style={{
+          width: 32,
+          height: 32,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginRight: -5,
+          marginBottom: -5,
+        }}
+      >
+        <Ionicons
+          name="refresh-outline"
+          size={18}
+          color={role === MessageRole.USER ? userText2 : aiText2}
+        />
+      </TouchableOpacity>) : null}
       <TouchableOpacity
         onPress={handleDelete}
         style={{
