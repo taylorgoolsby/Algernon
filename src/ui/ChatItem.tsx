@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+
 import {
   StyleSheet,
   View,
   Dimensions,
   TouchableOpacity,
   Alert,
+  Text as RNText,
 } from 'react-native';
+
 import Colors, {
   userChat,
   aiChat,
@@ -16,12 +19,18 @@ import Colors, {
   aiText2Active,
   aiText2,
 } from '../Colors';
+
 import Text from './Text';
 import Markdown from 'react-native-markdown-display';
 import ProfilePic from './ProfilePic';
 import { Ionicons } from '@react-native-vector-icons/ionicons/static';
 import Spinner from './Spinner';
-import { MessageRole, type MessageSQL } from '../schema/Message/MessageSchema';
+
+import {
+  MessageRole,
+  type MessageSQL,
+} from '../schema/Message/MessageSchema';
+
 import { chatStore } from '../store/ChatStore';
 
 const screenWidth = Dimensions.get('window').width;
@@ -33,9 +42,7 @@ type ChatItemProps = {
 const ChatItem = (props: ChatItemProps) => {
   if (!props.message) return;
 
-  const { text, role } = props.message;
-
-  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor';
+  const { role } = props.message;
 
   return (
     <View
@@ -54,13 +61,15 @@ const ChatItem = (props: ChatItemProps) => {
 const ProfileRow = (props: ChatItemProps) => {
   if (!props.message) return;
 
-  const { text, role, messageId } = props.message;
+  const { role } = props.message;
 
-  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor';
+  const name =
+    role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor';
 
   return (
     <View style={styles.profileRow}>
       <ProfilePic message={props.message} />
+
       <Text
         style={
           role === MessageRole.ASSISTANT
@@ -77,19 +86,51 @@ const ProfileRow = (props: ChatItemProps) => {
 const Message = (props: ChatItemProps) => {
   if (!props.message) return;
 
-  const { text, role, messageId } = props.message;
+  const { text } = props.message;
 
-  const name = role === MessageRole.ASSISTANT ? 'Algernon' : 'Taylor';
+  let content = text;
 
-  let content = text
   try {
-    // todo:
-    // for some reason the DB returns \\n even though it inserts \n.
-    // here we parse it if possible just in case.
-    content = JSON.parse(`"${text}"`)
+    // TODO:
+    // For some reason the DB returns \\n even though it inserts \n.
+    // Here we parse it if possible just in case.
+    content = JSON.parse(`"${text}"`);
   } catch (error) {
     // console.error(error)
   }
+
+  const rules = {
+    text: (
+      node: any,
+      children: any,
+      parent: any,
+      styles: any,
+      inheritedStyles = {},
+    ) => (
+      <RNText
+        key={node.key}
+        style={[inheritedStyles, styles.text]}
+        selectable={true}
+      >
+        {node.content}
+      </RNText>
+    ),
+
+    textgroup: (
+      node: any,
+      children: any,
+      parent: any,
+      styles: any,
+    ) => (
+      <RNText
+        key={node.key}
+        style={styles.textgroup}
+        selectable={true}
+      >
+        {children}
+      </RNText>
+    ),
+  };
 
   return !!text ? (
     <View
@@ -100,6 +141,7 @@ const Message = (props: ChatItemProps) => {
       }}
     >
       <Markdown
+        rules={rules}
         style={{
           body: {
             color: 'white',
@@ -146,33 +188,41 @@ const Controls = (props: ChatItemProps) => {
         },
       ],
       {
-        cancelable: true, // Android: tapping outside / back button dismisses
+        cancelable: true,
         onDismiss: () => setIsConfirming(false),
       },
     );
   };
 
-  const isLast = chatStore.displayedMessageIds[chatStore.displayedMessageIds.length - 1] === messageId.toString()
+  const isLast =
+    chatStore.displayedMessageIds[
+      chatStore.displayedMessageIds.length - 1
+    ] === messageId.toString();
 
   return (
     <View style={styles.controls}>
-      {role === MessageRole.USER && isLast ? (<TouchableOpacity
-        onPress={() => chatStore.regenerateResponse(messageId.toString())}
-        style={{
-          width: 32,
-          height: 32,
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginRight: -5,
-          marginBottom: -5,
-        }}
-      >
-        <Ionicons
-          name="refresh-outline"
-          size={18}
-          color={role === MessageRole.USER ? userText2 : aiText2}
-        />
-      </TouchableOpacity>) : null}
+      {role === MessageRole.USER && isLast ? (
+        <TouchableOpacity
+          onPress={() =>
+            chatStore.regenerateResponse(messageId.toString())
+          }
+          style={{
+            width: 32,
+            height: 32,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: -5,
+            marginBottom: -5,
+          }}
+        >
+          <Ionicons
+            name="refresh-outline"
+            size={18}
+            color={role === MessageRole.USER ? userText2 : aiText2}
+          />
+        </TouchableOpacity>
+      ) : null}
+
       <TouchableOpacity
         onPress={handleDelete}
         style={{
@@ -185,7 +235,7 @@ const Controls = (props: ChatItemProps) => {
         }}
       >
         <Ionicons
-          name={'close-outline'}
+          name="close-outline"
           size={18}
           color={
             role === MessageRole.USER
@@ -211,9 +261,11 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     paddingRight: 8,
   },
+
   assistant: {
     backgroundColor: aiChat,
   },
+
   user: {
     alignSelf: 'flex-end',
     backgroundColor: userChat,
@@ -222,19 +274,23 @@ const styles = StyleSheet.create({
     maxWidth: screenWidth * 0.74,
     overflow: 'hidden',
   },
+
   profileRow: {
     flexDirection: 'row',
     marginBottom: 3,
   },
+
   assistantText: {
     color: aiText,
     marginLeft: 2,
   },
+
   userText: {
     color: userText,
     marginLeft: 2,
     marginRight: 7,
   },
+
   controls: {
     height: 26,
     flexDirection: 'row',

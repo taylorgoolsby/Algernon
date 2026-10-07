@@ -26,4 +26,13 @@ CREATE TABLE IF NOT EXISTS \`ShortTermMemory\` (
   \`inputs\` TEXT NOT NULL,
   \`summary\` TEXT NOT NULL,
   \`dateCreated\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);`
+);
+
+CREATE TABLE IF NOT EXISTS \`Annotation\` (
+  \`annotationId\` INTEGER NOT NULL,
+  \`messageId\` INTEGER NOT NULL,
+  \`text\` TEXT NOT NULL,
+  \`embedding\` TEXT NOT NULL,
+  \`dateCreated\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS \`MESSAGEIDINDEX\` ON \`Annotation\` (\`messageId\` ASC);`
