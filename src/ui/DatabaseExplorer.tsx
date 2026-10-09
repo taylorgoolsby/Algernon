@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  View,
+  ScrollView,
+  NativeModules,
+  Alert,
+  Pressable,
+} from 'react-native';
 import Text from './Text';
 import { query } from '../schema/database';
-import sqltag, {raw} from '@taylorgoolsby/sql-template-tag';
+import sqltag from '@taylorgoolsby/sql-template-tag';
 import MessageInterface from '../schema/Message/MessageInterface';
-import type { MessageSQL } from '../schema/Message/MessageSchema';
 import AnnotationInterface from '../schema/Annotation/AnnotationInterface';
+
+const { FaissBridge } = NativeModules;
 
 type TableData = {
   name: string;
@@ -38,25 +45,15 @@ async function getTableValues(name: string): Promise<Array<Record<string, any>>>
 
 export default function DatabaseExplorer() {
   const [tables, setTables] = useState<TableData[]>([]);
+  const [faissCount, setFaissCount] = useState<number | null>(null);
+  const [faissError, setFaissError] = useState<string | null>(null);
+  const [faissBusy, setFaissBusy] = useState(false);
 
   useEffect(() => {
-    // getTables().then(setTables).catch(console.error);
     (async () => {
       const tablesResult = await getTables();
-      /* tablesResult: 
-      [ { name: 'Annotation' },
-      { name: 'Completion' },
-      { name: 'Message' },
-      { name: 'ShortTermMemory' },
-      { name: 'sqlite_sequence' },
-      insertId: undefined ]
-      */
 
-      const tableNames = tablesResult
-        .map((table: any) => table.name);
-      /* tableNames:
-      [ 'Annotation', 'Completion', 'Message', 'ShortTermMemory' ]
-      */
+      const tableNames = tablesResult.map((table: any) => table.name);
 
       const loaded: TableData[] = await Promise.all(
         tableNames.map(async (name: string) => ({
@@ -66,8 +63,48 @@ export default function DatabaseExplorer() {
       );
 
       setTables(loaded);
-    })();
+    })().catch(console.error);
   }, []);
+
+  const refreshFaiss = useCallback(async () => {
+    try {
+      const count: number = await FaissBridge.ntotal();
+      setFaissCount(count);
+      setFaissError(null);
+    } catch (e: any) {
+      console.error(e);
+      setFaissError(String(e?.message ?? e));
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshFaiss();
+  }, [refreshFaiss]);
+
+  const deleteFaiss = useCallback(async () => {
+    setFaissBusy(true);
+    try {
+      await FaissBridge.deleteAndReinitialize();
+    } catch (e: any) {
+      console.error(e);
+      setFaissError(String(e?.message ?? e));
+      setFaissBusy(false);
+      return;
+    }
+    await refreshFaiss();
+    setFaissBusy(false);
+  }, [refreshFaiss]);
+
+  const confirmDeleteFaiss = useCallback(() => {
+    Alert.alert(
+      'Delete FAISS index?',
+      'This permanently removes all vectors and recreates an empty index. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: deleteFaiss },
+      ],
+    );
+  }, [deleteFaiss]);
 
   return (
     <ScrollView
@@ -77,6 +114,15 @@ export default function DatabaseExplorer() {
       <Text style={{ color: 'black', fontWeight: 'bold' }}>
         Database Explorer
       </Text>
+
+      <FaissSummary
+        count={faissCount}
+        error={faissError}
+        busy={faissBusy}
+        onRefresh={refreshFaiss}
+        onDelete={confirmDeleteFaiss}
+      />
+
       {tables.map((table) => (
         <DBTable key={table.name} name={table.name} values={table.values} />
       ))}
@@ -86,6 +132,85 @@ export default function DatabaseExplorer() {
 
 const INDENT = 8;
 const COL_WIDTH = 120;
+
+function SmallButton(props: {
+  label: string;
+  onPress: () => void;
+  disabled?: boolean;
+  destructive?: boolean;
+}) {
+  const color = props.destructive ? '#c62828' : '#1565c0';
+  return (
+    <Pressable
+      onPress={props.onPress}
+      disabled={props.disabled}
+      style={({ pressed }) => ({
+        borderWidth: 1,
+        borderColor: color,
+        borderRadius: 4,
+        paddingVertical: 4,
+        paddingHorizontal: 10,
+        opacity: props.disabled ? 0.4 : pressed ? 0.6 : 1,
+      })}
+    >
+      <Text style={{ color }}>{props.label}</Text>
+    </Pressable>
+  );
+}
+
+function FaissSummary(props: {
+  count: number | null;
+  error: string | null;
+  busy: boolean;
+  onRefresh: () => void;
+  onDelete: () => void;
+}) {
+  const { count, error, busy, onRefresh, onDelete } = props;
+
+  let right: string;
+  if (busy) right = 'working…';
+  else if (error) right = 'error';
+  else if (count === null) right = 'loading…';
+  else right = `${count} vectors`;
+
+  return (
+    <View
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.025)',
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.25)',
+        paddingVertical: 6,
+        paddingLeft: INDENT,
+        paddingRight: 8,
+        gap: 8,
+      }}
+    >
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Text style={{ color: 'black', fontWeight: '600' }}>FAISS Index</Text>
+        <Text style={{ color: error ? 'red' : 'gray' }}>{right}</Text>
+      </View>
+
+      {error && <Text style={{ color: 'red' }}>{error}</Text>}
+
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        <SmallButton label="Refresh" onPress={onRefresh} disabled={busy} />
+        <SmallButton
+          label="Delete & reinitialize"
+          onPress={onDelete}
+          disabled={busy}
+          destructive
+        />
+      </View>
+    </View>
+  );
+}
 
 function formatCell(value: any): string {
   if (value === null || value === undefined) return 'NULL';
