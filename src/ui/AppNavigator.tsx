@@ -2,7 +2,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import App from './App';
 import ChatScreen from './ChatScreen';
-import SettingsScreen from './SettingsScreen';
+import Settings from './Settings';
+import DatabaseExplorer from './DatabaseExplorer';
 import {initializeDatabase} from "../schema/initializeDatabase";
 import { chatStore } from '../store/ChatStore';
 import preferencesStore from '../store/PreferencesStore'
@@ -38,7 +39,14 @@ export default function AppNavigator() {
         />
         <Stack.Screen
           name="Settings"
-          component={SettingsScreen}
+          component={Settings}
+          options={{
+            headerShown: true,
+          }}
+        />
+        <Stack.Screen
+          name="Explorer"
+          component={DatabaseExplorer}
           options={{
             headerShown: true,
           }}
