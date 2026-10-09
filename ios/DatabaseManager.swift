@@ -3,6 +3,7 @@ import GRDB
 
 class DatabaseManager {
     static let shared = DatabaseManager()
+
     var dbQueue: DatabaseQueue?
 
     private init() {}
@@ -11,11 +12,16 @@ class DatabaseManager {
         do {
             let fileManager = FileManager.default
             let folderURL = try fileManager.url(
-                for: .documentDirectory, in: .userDomainMask,
-                appropriateFor: nil, create: true)
-                .appendingPathComponent("Database", isDirectory: true)
+                for: .documentDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: true
+            ).appendingPathComponent("Database", isDirectory: true)
 
-            try fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true)
+            try fileManager.createDirectory(
+                at: folderURL,
+                withIntermediateDirectories: true
+            )
 
             let dbURL = folderURL.appendingPathComponent("db.sqlite")
             dbQueue = try DatabaseQueue(path: dbURL.path)
@@ -24,18 +30,38 @@ class DatabaseManager {
         }
     }
 
-    func executeQuery(_ query: String) -> (Bool, [NSDictionary], Int64?, String?) {
+    func executeQuery(
+        _ query: String
+    ) -> (Bool, [NSDictionary], Int64?, String?) {
         var results = [NSDictionary]()
         var isSuccessful = true
         var lastInsertRowID: Int64? = nil
         var errorMessage: String? = nil
-        
+
         do {
-            try dbQueue?.write { db in
-                if query.lowercased().starts(with: "select") {
+            guard let dbQueue = dbQueue else {
+                throw NSError(
+                    domain: "DatabaseManager",
+                    code: 1,
+                    userInfo: [
+                        NSLocalizedDescriptionKey: "Database not initialized"
+                    ]
+                )
+            }
+
+            try dbQueue.write { db in
+                let normalizedQuery = query
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .lowercased()
+
+                if normalizedQuery.starts(with: "select")
+                    || normalizedQuery.starts(with: "pragma") {
+
                     let rows = try Row.fetchAll(db, sql: query)
+
                     for row in rows {
                         let result = NSMutableDictionary()
+
                         for (column, dbValue) in row {
                             switch dbValue.storage {
                             case .null:
@@ -50,12 +76,14 @@ class DatabaseManager {
                                 result[column] = data
                             }
                         }
+
                         results.append(result)
                     }
                 } else {
                     print("Executing query: \(query)")
                     try db.execute(sql: query)
-                    if query.lowercased().starts(with: "insert") {
+
+                    if normalizedQuery.starts(with: "insert") {
                         lastInsertRowID = db.lastInsertedRowID
                     }
                 }
@@ -65,6 +93,7 @@ class DatabaseManager {
             isSuccessful = false
             errorMessage = error.localizedDescription
         }
+
         return (isSuccessful, results, lastInsertRowID, errorMessage)
     }
 }

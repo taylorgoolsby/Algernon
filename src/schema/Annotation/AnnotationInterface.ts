@@ -15,6 +15,16 @@ export default class AnnotationInterface {
     return rows
   }
 
+  static async getAllExplorer(): Promise<Array<AnnotationSQL>> {
+    const query = sqltag`
+      SELECT * 
+      FROM Annotation
+      ORDER BY annotationId ASC;
+    `
+    const rows = await database.query(query)
+    return rows
+  }
+
   static async retrieve(
     annotationIds: Array<number>,
   ): Promise<Array<{ text: string, messageText: string, dateCreated: string }>> {

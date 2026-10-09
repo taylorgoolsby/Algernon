@@ -6,6 +6,12 @@ import type { Sql } from '@taylorgoolsby/sql-template-tag';
 
 const { DatabaseModule } = NativeModules;
 
+function isPlainObject(value: any) {
+  if (typeof value !== 'object' || value === null) return false;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
 // function flattenSql(queryObject: {
 //   sql: Array<string>,
 //   values: Array<string>,
@@ -33,7 +39,10 @@ export async function query(queryObject: Sql): Promise<any> {
     const res = await DatabaseModule.executeQuery(queryString);
 
     const results = res.results
-    results['insertId'] = res.insertId
+
+    if (res.insertId && isPlainObject(results)) {
+      results['insertId'] = res.insertId
+    }
 
     console.log("results", results);
 

@@ -3,8 +3,8 @@ import sqlDirective from 'graphql-to-sql'
 import gql from 'graphql-tag'
 import fs from 'fs'
 import * as Message from './Message/MessageSchema'
-import * as Completion from './Completion/CompletionSchema'
-import * as ShortTermMemory from './ShortTermMemory/ShortTermMemorySchema'
+// import * as Completion from './Completion/CompletionSchema'
+// import * as ShortTermMemory from './ShortTermMemory/ShortTermMemorySchema'
 import * as Annotation from './Annotation/AnnotationSchema'
 
 const {
@@ -32,8 +32,6 @@ const typeDefs = gql`
   directive @private on OBJECT | FIELD_DEFINITION
 
   ${Message.typeDefs}
-  ${Completion.typeDefs}
-  ${ShortTermMemory.typeDefs}
   ${Annotation.typeDefs}
 `
 

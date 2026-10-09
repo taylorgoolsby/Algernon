@@ -57,6 +57,16 @@ export default class MessageInterface {
     return rows
   }
 
+  static async getAllExplorer(): Promise<Array<MessageSQL>> {
+    const sql = sqltag`
+      SELECT * 
+      FROM Message
+      ORDER BY messageId ASC;
+    `
+    const rows = await database.query(sql)
+    return rows
+  }
+
   static async getOffsetLimit(windowId: number, offset: number, limit: number): Promise<Array<MessageSQL>> {
     const sql = sqltag`
       SELECT * 
