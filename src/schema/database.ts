@@ -39,8 +39,8 @@ export async function query(queryObject: Sql): Promise<any> {
     const res = await DatabaseModule.executeQuery(queryString);
 
     const results = res.results
-
-    if (res.insertId && isPlainObject(results)) {
+    // results['insertId'] = res.insertId
+    if (res.insertId || res.insertId === 0) {
       results['insertId'] = res.insertId
     }
 

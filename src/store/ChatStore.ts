@@ -72,6 +72,15 @@ class ChatStore {
     }
   };
 
+  reset() {
+    this.loaded = false
+    this.offset = 0
+    this.completedOffsets = {}
+    this.displayedMessageIds = []
+    this.messages = {}
+    limit = INITIAL_LIMIT // module-level pagination size
+  }
+
   async load() {
     await ChatStore.loadModel();
 
@@ -146,6 +155,7 @@ class ChatStore {
   }
 
   appendMessage: (output: AppendMessageOutput) => void = (output: AppendMessageOutput) => {
+    console.log('output.message', output.message)
     this.displayedMessageIds = [...this.displayedMessageIds, output.message.messageId.toString()]
     this.messages[output.message.messageId.toString()] = output.message
     this.hapticFeedback()

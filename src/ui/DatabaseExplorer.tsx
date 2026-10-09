@@ -8,9 +8,11 @@ import {
 } from 'react-native';
 import Text from './Text';
 import { query } from '../schema/database';
+import { dropAndRecreateTables } from '../schema/initializeDatabase';
 import sqltag from '@taylorgoolsby/sql-template-tag';
 import MessageInterface from '../schema/Message/MessageInterface';
 import AnnotationInterface from '../schema/Annotation/AnnotationInterface';
+import { chatStore } from '../store/ChatStore';
 
 const { FaissBridge } = NativeModules;
 
@@ -48,23 +50,53 @@ export default function DatabaseExplorer() {
   const [faissCount, setFaissCount] = useState<number | null>(null);
   const [faissError, setFaissError] = useState<string | null>(null);
   const [faissBusy, setFaissBusy] = useState(false);
+  const [sqlBusy, setSqlBusy] = useState(false);
+  const [sqlError, setSqlError] = useState<string | null>(null);
+
+  const loadTables = useCallback(async () => {
+    const tablesResult = await getTables();
+    const tableNames = tablesResult.map((table: any) => table.name);
+
+    const loaded: TableData[] = await Promise.all(
+      tableNames.map(async (name: string) => ({
+        name,
+        values: await getTableValues(name),
+      })),
+    );
+
+    setTables(loaded);
+  }, []);
 
   useEffect(() => {
-    (async () => {
-      const tablesResult = await getTables();
+    loadTables().catch(console.error);
+  }, [loadTables]);
 
-      const tableNames = tablesResult.map((table: any) => table.name);
+  const dropAndRecreate = useCallback(async () => {
+    setSqlBusy(true);
+    setSqlError(null);
+    try {
+      await dropAndRecreateTables();
+      chatStore.reset();
+      await chatStore.load();
+      await loadTables();
+    } catch (e: any) {
+      console.error(e);
+      setSqlError(String(e?.message ?? e));
+    } finally {
+      setSqlBusy(false);
+    }
+  }, [loadTables]);
 
-      const loaded: TableData[] = await Promise.all(
-        tableNames.map(async (name: string) => ({
-          name,
-          values: await getTableValues(name),
-        })),
-      );
-
-      setTables(loaded);
-    })().catch(console.error);
-  }, []);
+  const confirmDropAndRecreate = useCallback(() => {
+    Alert.alert(
+      'Drop and recreate tables?',
+      'This permanently deletes all rows in Message, Annotation, Completion and ShortTermMemory, then recreates the tables. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Drop', style: 'destructive', onPress: dropAndRecreate },
+      ],
+    );
+  }, [dropAndRecreate]);
 
   const refreshFaiss = useCallback(async () => {
     try {
@@ -123,6 +155,12 @@ export default function DatabaseExplorer() {
         onDelete={confirmDeleteFaiss}
       />
 
+      <SqliteActions
+        busy={sqlBusy}
+        error={sqlError}
+        onDropAndRecreate={confirmDropAndRecreate}
+      />
+
       {tables.map((table) => (
         <DBTable key={table.name} name={table.name} values={table.values} />
       ))}
@@ -155,6 +193,51 @@ function SmallButton(props: {
     >
       <Text style={{ color }}>{props.label}</Text>
     </Pressable>
+  );
+}
+
+function SqliteActions(props: {
+  busy: boolean;
+  error: string | null;
+  onDropAndRecreate: () => void;
+}) {
+  const { busy, error, onDropAndRecreate } = props;
+
+  return (
+    <View
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.025)',
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.25)',
+        paddingVertical: 6,
+        paddingLeft: INDENT,
+        paddingRight: 8,
+        gap: 8,
+      }}
+    >
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Text style={{ color: 'black', fontWeight: '600' }}>SQLite</Text>
+        {busy && <Text style={{ color: 'gray' }}>working…</Text>}
+      </View>
+
+      {error && <Text style={{ color: 'red' }}>{error}</Text>}
+
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        <SmallButton
+          label="Drop & recreate tables"
+          onPress={onDropAndRecreate}
+          disabled={busy}
+          destructive
+        />
+      </View>
+    </View>
   );
 }
 

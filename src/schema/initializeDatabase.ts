@@ -118,3 +118,13 @@ export async function truncateDatabase() {
 
   await initData()
 }
+
+export async function dropAndRecreateTables() {
+  // @ts-ignore
+  await query(sqltag`DROP TABLE IF EXISTS Message;`)
+  await query(sqltag`DROP TABLE IF EXISTS Annotation;`)
+  await query(sqltag`DROP TABLE IF EXISTS Completion;`)
+  await query(sqltag`DROP TABLE IF EXISTS ShortTermMemory;`)
+  // SQLite removes the table's row from sqlite_sequence automatically on drop.
+  await initializeDatabase()
+}

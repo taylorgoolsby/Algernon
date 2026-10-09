@@ -101,6 +101,7 @@ export default class ChatIteration {
         this.iterationQueue.push(iterationTask);
       }
     } catch (error) {
+      console.error(error)
       onError(error as Error)
     }
   }
