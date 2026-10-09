@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import App from './App';
 import ChatScreen from './ChatScreen';
+import SettingsScreen from './SettingsScreen';
 import {initializeDatabase} from "../schema/initializeDatabase";
 import { chatStore } from '../store/ChatStore';
 import preferencesStore from '../store/PreferencesStore'
@@ -33,6 +34,13 @@ export default function AppNavigator() {
           component={ChatScreen}
           options={{
             headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            headerShown: true,
           }}
         />
       </Stack.Navigator>

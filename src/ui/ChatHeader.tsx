@@ -2,12 +2,14 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from '@react-native-community/blur';
+import { useNavigation } from '@react-navigation/native';
 import Text from './Text';
 
 export const extraHeight = 31;
 
 const ChatHeader = () => {
   const safeAreaInsets = useSafeAreaInsets();
+  const navigation = useNavigation();
 
   return (
     <BlurView
@@ -25,6 +27,7 @@ const ChatHeader = () => {
         }}
       >
         <TouchableOpacity
+          onPress={() => navigation.navigate('Settings' as never)}
           style={{
             paddingLeft: 25,
             paddingRight: 25,
