@@ -7,6 +7,7 @@ import MessageInterface from './Message/MessageInterface'
 import sqltag from '@taylorgoolsby/sql-template-tag'
 import {chatStore} from '../store/ChatStore'
 import {MessageRole} from './Message/MessageSchema'
+import LongTermAnnotation from '../agent/LongTermAnnotation'
 
 const {DatabaseModule} = NativeModules
 
@@ -42,26 +43,28 @@ async function initData() {
 
   // await MessageInterface.insert(chatStore.windowId, MessageRole.ASSISTANT, 'Hi, how can I help?', true)
   // await MessageInterface.insert(chatStore.windowId, MessageRole.ASSISTANT, 'Hi! Talk freely, and I\'ll find patterns in your thoughts.', true)
+  const initialText = 'Hi, how can I help you?'
   firstMessage = await MessageInterface.insert(
     chatStore.windowId,
     MessageRole.ASSISTANT,
     // 'Hey there! Share your thoughts, and I’ll help you uncover the hidden patterns within.',
-    'Hi, how can I help you?',
+    initialText,
     null,
     true,
   )
 
   // Initial annotations are needed so that memory viewer has something to show.
   // At least 4 are needed to form a 3D ellipsoid.
-  const initalAnnotations = [
-    'Beginning use of Algernon AI, an AI chat app for insight discovery.',
-    'Exploring the potential of AI technology for personal growth and learning.',
-    "Algernon is the mouse from 'Flowers for Algernon,' symbolizing the fleeting nature of enhanced intelligence.",
-    'A silvered mouse, in circuits deep, uncovers truths and secrets keep.',
-  ]
-  for (const annotationText of initalAnnotations) {
-    // await LongTermAnnotation.embedAndInsert(firstMessage, annotationText)
-  }
+  // const initalAnnotations = [
+  //   'Beginning use of Algernon AI, an AI chat app for insight discovery.',
+  //   'Exploring the potential of AI technology for personal growth and learning.',
+  //   "Algernon is the mouse from 'Flowers for Algernon,' symbolizing the fleeting nature of enhanced intelligence.",
+  //   'A silvered mouse, in circuits deep, uncovers truths and secrets keep.',
+  // ]
+  // for (const annotationText of initalAnnotations) {
+  //   // await LongTermAnnotation.embedAndInsert(firstMessage, annotationText)
+  // }
+  await LongTermAnnotation.embedAndInsert(firstMessage, initialText)
 }
 
 async function migrate() {
