@@ -1,10 +1,10 @@
-import React from 'react';
-import { FlatList, View, KeyboardAvoidingView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ChatItem from './ChatItem';
-import { extraHeight } from './ChatHeader';
-import {observer} from 'mobx-react-lite'
-import { chatStore } from '../store/ChatStore';
+import React from 'react'
+import { FlatList, View, KeyboardAvoidingView } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import ChatItem from './ChatItem'
+import { extraHeight } from './ChatHeader'
+import { observer } from 'mobx-react-lite'
+import { chatStore } from '../store/ChatStore'
 
 // const data = [
 //   {
@@ -28,13 +28,10 @@ import { chatStore } from '../store/ChatStore';
 // ];
 
 const ChatScrollView = observer(() => {
-  const safeAreaInsets = useSafeAreaInsets();
+  const safeAreaInsets = useSafeAreaInsets()
 
   return (
-    <KeyboardAvoidingView 
-      style={{flex: 1}} 
-      behavior={'padding'}
-    >
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={'padding'}>
       <FlatList
         style={{
           flex: 1,
@@ -50,17 +47,27 @@ const ChatScrollView = observer(() => {
           paddingLeft: 16,
           paddingRight: 16,
         }}
-        data={chatStore.displayedMessageIds}
-        extraData={chatStore.displayedMessageIds.map(messageId => chatStore.messages[messageId]?.text)}
+        data={
+          chatStore.searchMode
+            ? chatStore.searchResultMessageIds
+            : chatStore.displayedMessageIds
+        }
+        extraData={
+          chatStore.searchMode
+            ? chatStore.searchResultMessageIds.map(
+                id => chatStore.messages[id]?.text,
+              )
+            : chatStore.displayedMessageIds.map(
+                id => chatStore.messages[id]?.text,
+              )
+        }
         renderItem={({ item }) => {
-          return (
-            <ChatItem message={chatStore.messages[item]} />
-          )
+          return <ChatItem message={chatStore.messages[item]} />
         }}
         keyExtractor={item => item}
       />
     </KeyboardAvoidingView>
-  );
-});
+  )
+})
 
-export default ChatScrollView;
+export default ChatScrollView

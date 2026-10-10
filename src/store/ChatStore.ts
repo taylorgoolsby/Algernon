@@ -1,4 +1,4 @@
-import { makeAutoObservable, observable, action } from 'mobx'
+import { makeAutoObservable, runInAction, observable, action } from 'mobx'
 import type { MessageSQL } from '../schema/Message/MessageSchema'
 import type { AppendMessageOutput } from '../types/AppendMessageOutput'
 import type { UpdateMessageOutput } from '../types/UpdateMessageOutput'
@@ -10,6 +10,7 @@ import Colors from '../Colors'
 import ChatIteration from '../agent/ChatIteration'
 import preferencesStore from './PreferencesStore'
 import { NativeEventEmitter, NativeModules } from 'react-native'
+import LongTermAnnotation from '../agent/LongTermAnnotation'
 
 const { LLMNativeModule } = NativeModules
 
@@ -31,6 +32,10 @@ class ChatStore {
   offset: number = 0
   completedOffsets: { [key: string]: boolean } = {}
   displayedMessageIds: Array<string> = []
+
+  searchMode: boolean = false
+  searchResultMessageIds: string[] = []
+
   messages: { [messageId: string]: MessageSQL | null | undefined } = {}
 
   constructor() {
@@ -85,6 +90,8 @@ class ChatStore {
     this.completedOffsets = {}
     this.displayedMessageIds = []
     this.messages = {}
+    this.searchResultMessageIds = []
+    this.searchMode = false
     limit = INITIAL_LIMIT // module-level pagination size
   }
 
@@ -233,6 +240,41 @@ class ChatStore {
     this.displayedMessageIds = this.displayedMessageIds.filter(
       id => id !== messageId.toString(),
     )
+  }
+
+  setSearchMode = (enabled: boolean) => {
+    this.searchMode = enabled
+
+    if (!enabled) {
+      this.searchResultMessageIds = []
+    }
+  }
+
+  searchMessages = async (query: string) => {
+    const text = query.trim()
+
+    if (!text) {
+      this.searchResultMessageIds = []
+      return
+    }
+
+    const { labels, distances } = await LongTermAnnotation.search(text)
+
+    const annotationIds = labels.filter(
+      (label, i) => label >= 0 && distances[i] > 0.25,
+    )
+
+    const messages = await MessageInterface.getFromAnnotations(annotationIds)
+
+    runInAction(() => {
+      this.searchResultMessageIds = [
+        ...new Set(messages.map(message => message.messageId.toString())),
+      ]
+
+      for (const message of messages) {
+        this.messages[message.messageId.toString()] = message
+      }
+    })
   }
 
   //   onSubmit(text: string, role: string) {

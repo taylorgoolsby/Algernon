@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react'
 import {
   View,
   TextInput,
@@ -6,28 +6,27 @@ import {
   KeyboardAvoidingView,
   Dimensions,
   TouchableOpacity,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BlurView } from '@react-native-community/blur';
-import Colors, { footerActive, footerInactive } from '../Colors';
-import { chatStore } from '../store/ChatStore';
-import { Ionicons } from '@react-native-vector-icons/ionicons/static';
-import MicButton from './MicButton';
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { BlurView } from '@react-native-community/blur'
+import Colors, { footerActive, footerInactive } from '../Colors'
+import { chatStore } from '../store/ChatStore'
+import { Ionicons } from '@react-native-vector-icons/ionicons/static'
+import MicButton from './MicButton'
+import { observer } from 'mobx-react-lite';
 
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = Dimensions.get('window').width
 
-const ChatFooter = () => {
-  const [searchMode, setSearchMode] = useState(false);
+const ChatFooter = observer(() => {
+  const safeAreaInsets = useSafeAreaInsets()
 
-  const safeAreaInsets = useSafeAreaInsets();
-
-  const [value, setValue] = useState('');
-  const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
+  const [value, setValue] = useState('')
+  const inputRef = useRef<React.ComponentRef<typeof TextInput>>(null)
 
   const handleTranscriptionComplete = (text: string) => {
-    setValue(text);
-    inputRef.current?.focus();
-  };
+    setValue(text)
+    inputRef.current?.focus()
+  }
 
   return (
     <KeyboardAvoidingView
@@ -53,37 +52,49 @@ const ChatFooter = () => {
             alignItems: 'center',
           }}
         >
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              chatStore.setSearchMode(!chatStore.searchMode)
+              setValue('')
+            }}
+          >
             <Ionicons
               style={{
                 marginTop: 0,
                 marginLeft: 23,
               }}
-              name={'search-circle'}
+              name={chatStore.searchMode ? 'search-circle' : 'search-circle'}
               size={28}
-              color={footerInactive}
+              color={chatStore.searchMode ? Colors.blue : footerInactive}
             />
           </TouchableOpacity>
           <TextInput
             ref={inputRef}
             style={styles.input}
-            placeholder={searchMode ? 'Search' : 'Message'}
+            placeholder={chatStore.searchMode ? 'Search' : 'Message'}
             placeholderTextColor={Colors.sendIconDisabledBg}
             returnKeyType="done"
             value={value}
             onChangeText={setValue}
             onSubmitEditing={({ nativeEvent }) => {
-              const text = nativeEvent.text;
-              chatStore.submitMessage(text);
-              setValue('');
+              const text = nativeEvent.text.trim()
+              if (!text) return
+
+              if (chatStore.searchMode) {
+                chatStore.searchMessages(text).catch(console.error)
+              } else {
+                chatStore.submitMessage(text)
+              }
+
+              setValue('')
             }}
           />
           <MicButton onTranscriptionComplete={handleTranscriptionComplete} />
         </View>
       </BlurView>
     </KeyboardAvoidingView>
-  );
-};
+  )
+})
 
 const styles = StyleSheet.create({
   container: {
@@ -106,6 +117,6 @@ const styles = StyleSheet.create({
     fontFamily: Colors.fontFamily,
     fontWeight: '300',
   },
-});
+})
 
-export default ChatFooter;
+export default ChatFooter
