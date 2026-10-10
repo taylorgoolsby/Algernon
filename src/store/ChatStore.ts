@@ -1,15 +1,15 @@
-import {makeAutoObservable, observable, action} from 'mobx'
-import type { MessageSQL } from "../schema/Message/MessageSchema";
-import type { AppendMessageOutput } from "../types/AppendMessageOutput";
-import type { UpdateMessageOutput } from "../types/UpdateMessageOutput";
-import MessageInterface from "../schema/Message/MessageInterface";
-import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { makeAutoObservable, observable, action } from 'mobx'
+import type { MessageSQL } from '../schema/Message/MessageSchema'
+import type { AppendMessageOutput } from '../types/AppendMessageOutput'
+import type { UpdateMessageOutput } from '../types/UpdateMessageOutput'
+import MessageInterface from '../schema/Message/MessageInterface'
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback'
 import debounce from 'lodash.debounce'
-import Colors from "../Colors";
+import Colors from '../Colors'
 // import LongTermAnnotation from "../agent/LongTermAnnotation";
-import ChatIteration from "../agent/ChatIteration";
-import preferencesStore from "./PreferencesStore";
-import { NativeEventEmitter, NativeModules } from 'react-native';
+import ChatIteration from '../agent/ChatIteration'
+import preferencesStore from './PreferencesStore'
+import { NativeEventEmitter, NativeModules } from 'react-native'
 
 const { LLMNativeModule } = NativeModules
 
@@ -29,12 +29,12 @@ class ChatStore {
   loaded: boolean = false
   windowId: number = 0
   offset: number = 0
-  completedOffsets: {[key: string]: boolean} = {}
+  completedOffsets: { [key: string]: boolean } = {}
   displayedMessageIds: Array<string> = []
-  messages: {[messageId: string]: MessageSQL | null | undefined} = {}
+  messages: { [messageId: string]: MessageSQL | null | undefined } = {}
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this)
 
     // this.messages.push({
     //   messageId: this.messages.length,
@@ -43,7 +43,10 @@ class ChatStore {
     //   name: 'Algernon',
     // });
 
-    this.fetchEarlierMessages = debounce(this.fetchEarlierMessages, 250, {leading: true, trailing: false}).bind(this)
+    this.fetchEarlierMessages = debounce(this.fetchEarlierMessages, 250, {
+      leading: true,
+      trailing: false,
+    }).bind(this)
 
     // Wait 2 frames before updating the screen.
     // This allows other events to be handled while a message is updating.
@@ -52,7 +55,11 @@ class ChatStore {
     // so we debounce the haptic feedback to 42ms.
     // This is the frequency at which cats purr.
     // $FlowFixMe
-    this.hapticFeedback = debounce(this.hapticFeedback, 42, {leading: true, trailing: false, maxWait: 42}).bind(this)
+    this.hapticFeedback = debounce(this.hapticFeedback, 42, {
+      leading: true,
+      trailing: false,
+      maxWait: 42,
+    }).bind(this)
   }
 
   // Function to load the model asynchronously
@@ -65,12 +72,12 @@ class ChatStore {
 
     try {
       // Load the model and wait for the promise to resolve
-      await LLMNativeModule.loadModel();
-      console.log('Model loaded successfully!');
+      await LLMNativeModule.loadModel()
+      console.log('Model loaded successfully!')
     } catch (error) {
-      console.error('Error loading model:', error);
+      console.error('Error loading model:', error)
     }
-  };
+  }
 
   reset() {
     this.loaded = false
@@ -82,7 +89,7 @@ class ChatStore {
   }
 
   async load() {
-    await ChatStore.loadModel();
+    await ChatStore.loadModel()
 
     limit = INITIAL_LIMIT
     const lastMessage = await MessageInterface.getLast(this.windowId)
@@ -103,8 +110,14 @@ class ChatStore {
     // console.log('this.offset', this.offset)
     // console.log('limit', limit)
 
-    const messages = await MessageInterface.getOffsetLimit(this.windowId, this.offset, limit)
-    this.setDisplayedMessageIds(messages.map(message => message.messageId.toString()))
+    const messages = await MessageInterface.getOffsetLimit(
+      this.windowId,
+      this.offset,
+      limit,
+    )
+    this.setDisplayedMessageIds(
+      messages.map(message => message.messageId.toString()),
+    )
     this.messages = {}
     for (const message of messages) {
       // $FlowFixMe
@@ -154,13 +167,20 @@ class ChatStore {
     )
   }
 
-  appendMessage: (output: AppendMessageOutput) => void = (output: AppendMessageOutput) => {
-    this.displayedMessageIds = [...this.displayedMessageIds, output.message.messageId.toString()]
+  appendMessage: (output: AppendMessageOutput) => void = (
+    output: AppendMessageOutput,
+  ) => {
+    this.displayedMessageIds = [
+      ...this.displayedMessageIds,
+      output.message.messageId.toString(),
+    ]
     this.messages[output.message.messageId.toString()] = output.message
     this.hapticFeedback()
   }
 
-  updateMessage: (output: UpdateMessageOutput) => void = (output: UpdateMessageOutput) => {
+  updateMessage: (output: UpdateMessageOutput) => void = (
+    output: UpdateMessageOutput,
+  ) => {
     // console.log('output.message', output.message)
     this.messages[output.message.messageId.toString()] = output.message
     setTimeout(() => {
@@ -169,9 +189,9 @@ class ChatStore {
   }
 
   hapticFeedback() {
-    ReactNativeHapticFeedback.trigger("soft", {
+    ReactNativeHapticFeedback.trigger('soft', {
       enableVibrateFallback: false,
-    });
+    })
   }
 
   fetchEarlierMessages: () => Promise<void> = async (): Promise<void> => {
@@ -186,8 +206,15 @@ class ChatStore {
     }
     this.completedOffsets[this.offset.toString()] = true
 
-    const messages = await MessageInterface.getOffsetLimit(this.windowId, this.offset, limit)
-    this.displayedMessageIds = [...messages.map(message => message.messageId.toString()), ...this.displayedMessageIds]
+    const messages = await MessageInterface.getOffsetLimit(
+      this.windowId,
+      this.offset,
+      limit,
+    )
+    this.displayedMessageIds = [
+      ...messages.map(message => message.messageId.toString()),
+      ...this.displayedMessageIds,
+    ]
     for (const message of messages) {
       // $FlowFixMe
       this.messages[message.messageId.toString()] = message
@@ -195,74 +222,78 @@ class ChatStore {
   }
 
   // await chatStore.deleteMessage(message.messageId)
-  deleteMessage: (messageId: number) => Promise<void> = async (messageId: number): Promise<void> => {
+  deleteMessage: (messageId: number) => Promise<void> = async (
+    messageId: number,
+  ): Promise<void> => {
     // todo: delete annotations from faiss
     await MessageInterface.softDelete(messageId)
     const message = await MessageInterface.get(this.windowId, messageId)
     // $FlowFixMe
     this.messages[messageId.toString()] = null
-    this.displayedMessageIds = this.displayedMessageIds.filter(id => id !== messageId.toString())
+    this.displayedMessageIds = this.displayedMessageIds.filter(
+      id => id !== messageId.toString(),
+    )
   }
 
-//   onSubmit(text: string, role: string) {
-//     (async () => {
-//       const sendToLLM = [
-//         {
-//           role: 'system',
-//           content: `Speak with deep process and light output. Do not rush toward the first plausible response. Let initial thoughts remain provisional, and briefly explore whether there is a clearer or better formulation before responding.
+  //   onSubmit(text: string, role: string) {
+  //     (async () => {
+  //       const sendToLLM = [
+  //         {
+  //           role: 'system',
+  //           content: `Speak with deep process and light output. Do not rush toward the first plausible response. Let initial thoughts remain provisional, and briefly explore whether there is a clearer or better formulation before responding.
 
-// Prefer the simplest response that preserves the important insight. Treat brevity as a feature, not a constraint. Use short sentences and keep one idea per sentence. Avoid unnecessary explanations, qualifications, and repetition, but never sacrifice substance merely to be brief.
+  // Prefer the simplest response that preserves the important insight. Treat brevity as a feature, not a constraint. Use short sentences and keep one idea per sentence. Avoid unnecessary explanations, qualifications, and repetition, but never sacrifice substance merely to be brief.
 
-// When deeper reasoning leads to a complex insight, compress it into a simple final expression. Think expansively when necessary, but write minimally when possible.
+  // When deeper reasoning leads to a complex insight, compress it into a simple final expression. Think expansively when necessary, but write minimally when possible.
 
-// The response should feel natural and considered, not like a transcript of the reasoning that produced it.
+  // The response should feel natural and considered, not like a transcript of the reasoning that produced it.
 
-// Explore internally. Compress externally.`,
-//         },
-//       ];
-//       for (
-//         let i = Math.max(this.messages.length - 10, 0);
-//         i < this.messages.length;
-//         i++
-//       ) {
-//         sendToLLM.push({
-//           role: this.messages[i].role,
-//           content: this.messages[i].content,
-//         });
-//       }
-//       sendToLLM.push({ role: 'user', content: text });
+  // Explore internally. Compress externally.`,
+  //         },
+  //       ];
+  //       for (
+  //         let i = Math.max(this.messages.length - 10, 0);
+  //         i < this.messages.length;
+  //         i++
+  //       ) {
+  //         sendToLLM.push({
+  //           role: this.messages[i].role,
+  //           content: this.messages[i].content,
+  //         });
+  //       }
+  //       sendToLLM.push({ role: 'user', content: text });
 
-//       console.log(sendToLLM);
+  //       console.log(sendToLLM);
 
-//       this.messages.push({
-//         messageId: this.messages.length,
-//         content: text,
-//         role,
-//         name: 'Taylor',
-//       });
-//       const aiMessageId = this.messages.length;
-//       this.messages.push({
-//         messageId: aiMessageId,
-//         content: '',
-//         role: 'assistant',
-//         name: 'Algernon',
-//       });
+  //       this.messages.push({
+  //         messageId: this.messages.length,
+  //         content: text,
+  //         role,
+  //         name: 'Taylor',
+  //       });
+  //       const aiMessageId = this.messages.length;
+  //       this.messages.push({
+  //         messageId: aiMessageId,
+  //         content: '',
+  //         role: 'assistant',
+  //         name: 'Algernon',
+  //       });
 
-//       const completeResponse = await generateTextResponse(
-//         sendToLLM,
-//         streamingResponse => {
-//           console.log('streaming response', streamingResponse);
-//           this.messages[aiMessageId].content = streamingResponse;
-//           // setLastResponse(response);
-//         },
-//       );
-//       console.log('complete response', completeResponse);
-//       console.log(
-//         'this.messages[aiMessageId].content',
-//         this.messages[aiMessageId].content,
-//       );
-//     })();
-//   }
+  //       const completeResponse = await generateTextResponse(
+  //         sendToLLM,
+  //         streamingResponse => {
+  //           console.log('streaming response', streamingResponse);
+  //           this.messages[aiMessageId].content = streamingResponse;
+  //           // setLastResponse(response);
+  //         },
+  //       );
+  //       console.log('complete response', completeResponse);
+  //       console.log(
+  //         'this.messages[aiMessageId].content',
+  //         this.messages[aiMessageId].content,
+  //       );
+  //     })();
+  //   }
 }
 
-export const chatStore = new ChatStore();
+export const chatStore = new ChatStore()
