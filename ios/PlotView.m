@@ -16,6 +16,33 @@ static const float kMaxAngularSpeed    = 15.0f;  // rad/s clamp for flings
 static const double kReleaseStillTime  = 0.08;   // If finger was still this long before lift, no fling
 static const float kVelocitySmoothing  = 0.5f;   // 0..1, weight of newest velocity sample
 
+// Minimum number of vectors needed for clustering to be meaningful.
+// 10 is a placeholder; set it to whatever ClusteringAndEllipsoids requires.
+static const int kMinVectorsForClustering = 10;
+
+// Cluster color palette. The first three match the original red / blue / green mapping.
+static const GLfloat kPalette[][3] = {
+    {1.0f, 0.0f, 0.0f},   // 0 red
+    {0.0f, 0.0f, 1.0f},   // 1 blue
+    {0.0f, 1.0f, 0.0f},   // 2 green
+    {1.0f, 1.0f, 0.0f},   // 3 yellow
+    {0.0f, 1.0f, 1.0f},   // 4 cyan
+    {1.0f, 0.0f, 1.0f},   // 5 magenta
+    {1.0f, 0.5f, 0.0f},   // 6 orange
+    {0.6f, 0.4f, 1.0f},   // 7 violet
+};
+static const int kPaletteCount = (int)(sizeof(kPalette) / sizeof(kPalette[0]));
+
+// Writes the color for a cluster label into out[3]. Negative labels (e.g. noise) are gray.
+static void ColorForLabel(int label, GLfloat out[3]) {
+    if (label < 0) {
+        out[0] = 0.5f; out[1] = 0.5f; out[2] = 0.5f;
+        return;
+    }
+    const GLfloat *c = kPalette[label % kPaletteCount];
+    out[0] = c[0]; out[1] = c[1]; out[2] = c[2];
+}
+
 @implementation PlotViewManager
 
 RCT_EXPORT_MODULE()
@@ -142,11 +169,12 @@ RCT_EXPORT_MODULE()
 
 - (void)loadClusteringDataInBackground {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        //        [self loadClusteringData];
-        [self loadTestData];
+        [self loadClusteringData];
+        //        [self loadTestData];
     });
 }
 
+// Test loader using the bundled iris CSV. Not used by default.
 - (void)loadTestData {
     @try {
         NSString *path = [[NSBundle mainBundle] pathForResource:@"iris_dataset" ofType:@"csv"];
@@ -189,91 +217,68 @@ RCT_EXPORT_MODULE()
             }
         }
         
-        NSLog(@"IRIS Data:");
-        for (int i = 0; i < rowsCount; ++i) {
-            NSMutableString *dataString = [NSMutableString string];
-            for (int j = 0; j < colsCount; ++j) {
-                [dataString appendFormat:@"%f ", data[i * colsCount + j]];
-            }
-            NSLog(@"%@", dataString);
-        }
-        
         ClusteringAndEllipsoids *clusteringAndEllipsoids = [[ClusteringAndEllipsoids alloc] init];
-        self.clusteringResults = [clusteringAndEllipsoids performClusteringAndEllipsoids:data rows:rowsCount cols:colsCount];
+        NSDictionary *results = [clusteringAndEllipsoids performClusteringAndEllipsoids:data rows:rowsCount cols:colsCount];
+        free(data);
         
-        // Trigger a redraw to render the ellipsoid
+        // Swap results on the main thread, where drawRect: reads them.
         dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.isCleaned) {
+                [clusteringAndEllipsoids freeClusteringData:results];
+                return;
+            }
+            NSDictionary *old = self.clusteringResults;
+            self.clusteringResults = results;
+            if (old) {
+                [clusteringAndEllipsoids freeClusteringData:old];
+            }
             [self setNeedsDisplay];
         });
-        
-        // Free allocated memory
-        free(data);
     }
     @catch (NSException *exception) {
         NSLog(@"An error occurred: %@\nStack trace: %@", exception.reason, exception.callStackSymbols);
     }
 }
 
+// Loads all vectors from the FAISS index, clusters them, and displays the result.
 - (void)loadClusteringData {
-    NSLog(@"Loading PlotView data");
-    
-    FaissBridge *faissBridge = [FaissBridge sharedInstance];
-    NSDictionary *faissData = [faissBridge getVectors];
-    
-    if (faissData) {
+    @try {
+        NSDictionary *faissData = [[FaissBridge sharedInstance] getVectors];
+        if (!faissData) {
+            NSLog(@"PlotView: no vectors available from FAISS");
+            return;
+        }
+        
         int ntotal = [faissData[@"ntotal"] intValue];
         int dimension = [faissData[@"dimension"] intValue];
         float *database = [faissData[@"database"] pointerValue];
         
-        NSLog(@"ntotal: %d, dimension: %d", ntotal, dimension);
-        
-        // Print vectors
-        for (int i = 0; i < ntotal; i++) {
-            NSMutableString *vectorString = [NSMutableString stringWithString:@"Vector: "];
-            for (int j = 0; j < dimension; j++) {
-                [vectorString appendFormat:@"%f ", database[i * dimension + j]];
-            }
-            NSLog(@"%@", vectorString);
+        if (ntotal < kMinVectorsForClustering) {
+            NSLog(@"PlotView: only %d vectors, need at least %d", ntotal, kMinVectorsForClustering);
+            free(database);
+            return;
         }
         
         ClusteringAndEllipsoids *clustering = [[ClusteringAndEllipsoids alloc] init];
-        self.clusteringResults = [clustering performClusteringAndEllipsoids:database rows:ntotal cols:dimension];
-        
-        // Print clustering results labels
-        int *bestLabels = [(NSValue *)self.clusteringResults[@"bestLabels"] pointerValue];
-        for (int i = 0; i < ntotal; i++) {
-            NSLog(@"Label[%d]: %d", i, bestLabels[i]);
-        }
-        
-        // Print reduced data
-        float *reducedData = [(NSValue *)self.clusteringResults[@"reducedData"] pointerValue];
-        int reducedDim = 3; // Assuming the reduced dimension is 3
-        for (int i = 0; i < ntotal; i++) {
-            NSMutableString *reducedDataString = [NSMutableString stringWithString:@"Reduced Data: "];
-            for (int j = 0; j < reducedDim; j++) {
-                [reducedDataString appendFormat:@"%f ", reducedData[i * reducedDim + j]];
-            }
-            NSLog(@"%@", reducedDataString);
-        }
-        
-        NSMutableArray *ellipsoids = self.clusteringResults[@"bestEllipsoids"];
-        for (NSDictionary *ellipsoid in ellipsoids) {
-            NSLog(@"Mean: %@", ellipsoid[@"mean"]);
-            NSLog(@"Eigenvalues: %@", ellipsoid[@"eigenvalues"]);
-            NSLog(@"Eigenvectors: %@", ellipsoid[@"eigenvectors"]);
-        }
-        
-        // Trigger a redraw to render the ellipsoid
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self setNeedsDisplay];
-        });
-        
+        NSDictionary *results = [clustering performClusteringAndEllipsoids:database rows:ntotal cols:dimension];
         free(database);
         
-        // Load annotations after clustering
-        //        [self loadAnnotations];
-    } else {
-        NSLog(@"Failed to load data from FAISS");
+        // Swap results on the main thread, where drawRect: reads them.
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.isCleaned) {
+                [clustering freeClusteringData:results];
+                return;
+            }
+            NSDictionary *old = self.clusteringResults;
+            self.clusteringResults = results;
+            if (old) {
+                [clustering freeClusteringData:old];
+            }
+            [self setNeedsDisplay];
+        });
+    }
+    @catch (NSException *exception) {
+        NSLog(@"An error occurred: %@\nStack trace: %@", exception.reason, exception.callStackSymbols);
     }
 }
 
@@ -535,29 +540,8 @@ RCT_EXPORT_MODULE()
         vertices[i * 3 + 1] = transformedVertex.y;
         vertices[i * 3 + 2] = transformedVertex.z;
         
-        // Assign colors based on labels (for simplicity, map labels 0, 1, 2 to red, green, blue)
-        switch (labels[i]) {
-            case 0:
-                colors[i * 3 + 0] = 1.0f; // Red
-                colors[i * 3 + 1] = 0.0f;
-                colors[i * 3 + 2] = 0.0f;
-                break;
-            case 1:
-                colors[i * 3 + 0] = 0.0f;
-                colors[i * 3 + 1] = 0.0f; // Green
-                colors[i * 3 + 2] = 1.0f;
-                break;
-            case 2:
-                colors[i * 3 + 0] = 0.0f;
-                colors[i * 3 + 1] = 1.0f;
-                colors[i * 3 + 2] = 0.0f; // Blue
-                break;
-            default:
-                colors[i * 3 + 0] = 0.0f;
-                colors[i * 3 + 1] = 0.0f;
-                colors[i * 3 + 2] = 0.0f; // Black for other labels
-                break;
-        }
+        // Color each point by its cluster label using the palette
+        ColorForLabel(labels[i], &colors[i * 3]);
     }
     
     // Set up vertex array and buffer for reduced data
@@ -961,13 +945,9 @@ RCT_EXPORT_MODULE()
             covarianceMatrix[0] / determinant
         };
         
-        // Set up the color of the Gaussian (this controls the color of the splat)
-        GLfloat color[3] = {0, 0, 0};
-        if (index == 0) {
-            color[0] = 1;
-        } else {
-            color[2] = 1;
-        }
+        // Color of the Gaussian splat: same palette as the points, indexed by cluster
+        GLfloat color[3];
+        ColorForLabel((int)index, color);
         
         GLfloat billboardTriangleVertices[] = {
             // First triangle
@@ -1233,8 +1213,11 @@ RCT_EXPORT_MODULE()
         
         [self restoreNavigationGestures];
         
-        ClusteringAndEllipsoids *clustering = [[ClusteringAndEllipsoids alloc] init];
-        [clustering freeClusteringData:self.clusteringResults];
+        if (self.clusteringResults) {
+            ClusteringAndEllipsoids *clustering = [[ClusteringAndEllipsoids alloc] init];
+            [clustering freeClusteringData:self.clusteringResults];
+            self.clusteringResults = nil;
+        }
 
         if (_vertexArray) {
             glDeleteVertexArrays(1, &_vertexArray);

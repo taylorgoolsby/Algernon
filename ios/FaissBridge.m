@@ -50,37 +50,39 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(deleteAndReinitialize:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
     FaissBridge *sharedInstance = [FaissBridge sharedInstance];
-    if (!sharedInstance->index) {
-        reject(@"index_error", @"FAISS has not been initialized", nil);
-        return;
-    }
-
-    faiss_Index_free((FaissIndex *)sharedInstance->index);
-    sharedInstance->index = NULL; // Ensure the pointer is set to NULL after freeing
-    
-    // Get the file path for the index
-    NSString *filePath = [sharedInstance indexPath];
-    
-    // Create a file manager instance
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    
-    // Check if the index file exists
-    if ([fileManager fileExistsAtPath:filePath]) {
-        NSError *error;
-        
-        // Attempt to delete the file
-        if (![fileManager removeItemAtPath:filePath error:&error]) {
-            // If there is an error deleting the file, reject the promise with the error details
-            reject(@"delete_error", @"Failed to delete index file", error);
+    @synchronized (sharedInstance) {
+        if (!sharedInstance->index) {
+            reject(@"index_error", @"FAISS has not been initialized", nil);
             return;
         }
-    }
 
-    // Reinitialize the index
-    [sharedInstance initializeIndex];
-    [sharedInstance writeIndexToFile];
-  
-    NSLog(@"Pointer value of index after reinitialization: %p", sharedInstance->index);
+        faiss_Index_free((FaissIndex *)sharedInstance->index);
+        sharedInstance->index = NULL; // Ensure the pointer is set to NULL after freeing
+        
+        // Get the file path for the index
+        NSString *filePath = [sharedInstance indexPath];
+        
+        // Create a file manager instance
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        
+        // Check if the index file exists
+        if ([fileManager fileExistsAtPath:filePath]) {
+            NSError *error;
+            
+            // Attempt to delete the file
+            if (![fileManager removeItemAtPath:filePath error:&error]) {
+                // If there is an error deleting the file, reject the promise with the error details
+                reject(@"delete_error", @"Failed to delete index file", error);
+                return;
+            }
+        }
+
+        // Reinitialize the index
+        [sharedInstance initializeIndex];
+        [sharedInstance writeIndexToFile];
+      
+        NSLog(@"Pointer value of index after reinitialization: %p", sharedInstance->index);
+    }
     
     // If everything is successful, resolve the promise
     resolve(@(YES));
@@ -90,13 +92,16 @@ RCT_EXPORT_METHOD(deleteAndReinitialize:(RCTPromiseResolveBlock)resolve
 RCT_EXPORT_METHOD(ntotal:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
     FaissBridge *sharedInstance = [FaissBridge sharedInstance];
-    if (!sharedInstance->index) {
-        reject(@"index_error", @"FAISS has not been initialized", nil);
-        return;
-    }
+    int ntotal = 0;
+    @synchronized (sharedInstance) {
+        if (!sharedInstance->index) {
+            reject(@"index_error", @"FAISS has not been initialized", nil);
+            return;
+        }
 
-    // Get the total number of vectors in the index
-    int ntotal = (int)faiss_Index_ntotal((FaissIndex *)sharedInstance->index);
+        // Get the total number of vectors in the index
+        ntotal = (int)faiss_Index_ntotal((FaissIndex *)sharedInstance->index);
+    }
     
     // Return the total number of vectors
     resolve(@(ntotal));
@@ -107,10 +112,6 @@ RCT_EXPORT_METHOD(addVector:(NSArray<NSNumber *> *)vector
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
     FaissBridge *sharedInstance = [FaissBridge sharedInstance];
-    if (!sharedInstance->index) {
-        reject(@"index_error", @"FAISS has not been initialized", nil);
-        return;
-    }
     
     // Convert NSArray to C array
     float *c_vector = malloc(vector.count * sizeof(float));
@@ -121,21 +122,30 @@ RCT_EXPORT_METHOD(addVector:(NSArray<NSNumber *> *)vector
     for (NSUInteger i = 0; i < vector.count; ++i) {
         c_vector[i] = [vector[i] floatValue];
     }
-  
-    int ntotal = (int)faiss_Index_ntotal((FaissIndex *)sharedInstance->index);
     
-    // Add the vector to the index
-    if (faiss_Index_add((FaissIndex *)sharedInstance->index, 1, c_vector) != 0) {
+    int ntotal = 0;
+    @synchronized (sharedInstance) {
+        if (!sharedInstance->index) {
+            free(c_vector);
+            reject(@"index_error", @"FAISS has not been initialized", nil);
+            return;
+        }
+        
+        ntotal = (int)faiss_Index_ntotal((FaissIndex *)sharedInstance->index);
+        
+        // Add the vector to the index
+        if (faiss_Index_add((FaissIndex *)sharedInstance->index, 1, c_vector) != 0) {
+            free(c_vector);
+            reject(@"add_error", @"Failed to add vector to index", nil);
+            return;
+        }
         free(c_vector);
-        reject(@"add_error", @"Failed to add vector to index", nil);
-        return;
-    }
-    free(c_vector);
-    
-    // Write the updated index to file
-    if (![sharedInstance writeIndexToFile]) {
-        reject(@"write_error", @"Failed to write updated index to file", nil);
-        return;
+        
+        // Write the updated index to file
+        if (![sharedInstance writeIndexToFile]) {
+            reject(@"write_error", @"Failed to write updated index to file", nil);
+            return;
+        }
     }
     
     // Return success
@@ -148,10 +158,6 @@ RCT_EXPORT_METHOD(searchVectors:(NSArray<NSNumber *> *)queryVector
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
     FaissBridge *sharedInstance = [FaissBridge sharedInstance];
-    if (!sharedInstance->index) {
-        reject(@"index_error", @"FAISS has not been initialized", nil);
-        return;
-    }
     
     // Convert NSArray to C array for the query vector
     float *c_query = malloc(queryVector.count * sizeof(float));
@@ -174,8 +180,18 @@ RCT_EXPORT_METHOD(searchVectors:(NSArray<NSNumber *> *)queryVector
         return;
     }
     
-    // Perform the search
-    faiss_Index_search((FaissIndex *)sharedInstance->index, 1, c_query, k, distances, labels);
+    @synchronized (sharedInstance) {
+        if (!sharedInstance->index) {
+            free(c_query);
+            free(labels);
+            free(distances);
+            reject(@"index_error", @"FAISS has not been initialized", nil);
+            return;
+        }
+        
+        // Perform the search
+        faiss_Index_search((FaissIndex *)sharedInstance->index, 1, c_query, k, distances, labels);
+    }
     
     // Convert search results to NSArray for distances and labels
     NSMutableArray *distanceArray = [NSMutableArray arrayWithCapacity:k];
@@ -220,27 +236,36 @@ RCT_EXPORT_METHOD(searchVectors:(NSArray<NSNumber *> *)queryVector
 //    resolve(resultDict);
 //}
 
-// Method to retrieve vectors from the FAISS index without exposing to JS
+// Retrieves all vectors from the FAISS index without exposing them to JS.
+// The caller owns the returned "database" buffer and must free() it.
+// Returns nil if the index is missing, empty, or the read fails.
 - (NSDictionary *)getVectors {
-    // Print the pointer value of the index
-    NSLog(@"Pointer value of index at the beginning of getVectors: %p", index);
-  
-    if (!index) {
-        return nil;
+    @synchronized (self) {
+        if (!index) {
+            return nil;
+        }
+
+        int ntotal = (int)faiss_Index_ntotal((FaissIndex *)index);
+        if (ntotal == 0) {
+            return nil;
+        }
+
+        float *database = (float *)malloc((size_t)ntotal * dimension * sizeof(float));
+        if (!database) {
+            return nil;
+        }
+
+        if (faiss_Index_reconstruct_n((FaissIndex *)index, 0, ntotal, database) != 0) {
+            free(database);
+            return nil;
+        }
+
+        return @{
+            @"database": [NSValue valueWithPointer:database],
+            @"ntotal": @(ntotal),
+            @"dimension": @(dimension)
+        };
     }
-
-    int ntotal = (int)faiss_Index_ntotal((FaissIndex *)index);
-
-    // Retrieve the data from the index using reconstruct_n
-    float* database = (float*)malloc(ntotal * dimension * sizeof(float));
-    faiss_Index_reconstruct_n((FaissIndex *)index, 0, ntotal, database);
-
-    NSMutableDictionary *resultDict = [NSMutableDictionary dictionary];
-    resultDict[@"database"] = [NSValue valueWithPointer:database];
-    resultDict[@"ntotal"] = @(ntotal);
-    resultDict[@"dimension"] = @(dimension);
-
-    return resultDict;
 }
 
 // Method to get the file path for the FAISS index within the app's document directory
