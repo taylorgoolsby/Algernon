@@ -56,6 +56,9 @@ RCT_EXPORT_MODULE()
 @property (nonatomic, assign) CFTimeInterval previousTime;      // Last display link tick
 @property (nonatomic, assign) NSTimeInterval lastTouchTimestamp; // Timestamp of last touch event
 
+// Navigation gesture recognizers we temporarily disabled while touching the plot
+@property (nonatomic, strong) NSArray<UIGestureRecognizer *> *disabledNavRecognizers;
+
 @end
 
 @implementation PlotView
@@ -1085,9 +1088,58 @@ RCT_EXPORT_MODULE()
     }
 }
 
+#pragma mark - Navigation gesture suspension
+
+- (UINavigationController *)findNavigationController {
+    UIResponder *responder = self;
+    while (responder) {
+        if ([responder isKindOfClass:[UIViewController class]]) {
+            UINavigationController *nav = ((UIViewController *)responder).navigationController;
+            if (nav) return nav;
+        }
+        responder = responder.nextResponder;
+    }
+    return nil;
+}
+
+- (void)suspendNavigationGestures {
+    if (self.disabledNavRecognizers) return; // already suspended
+    
+    UINavigationController *nav = [self findNavigationController];
+    if (!nav) return;
+    
+    NSMutableArray<UIGestureRecognizer *> *disabled = [NSMutableArray array];
+    
+    // Edge swipe-back
+    UIGestureRecognizer *popGesture = nav.interactivePopGestureRecognizer;
+    if (popGesture && popGesture.enabled) {
+        popGesture.enabled = NO;
+        [disabled addObject:popGesture];
+    }
+    
+    // Full-screen swipe-back (react-native-screens adds its own pan recognizer)
+    for (UIGestureRecognizer *g in nav.view.gestureRecognizers) {
+        if ([g isKindOfClass:[UIPanGestureRecognizer class]] && g.enabled) {
+            g.enabled = NO;
+            [disabled addObject:g];
+        }
+    }
+    
+    self.disabledNavRecognizers = disabled;
+}
+
+- (void)restoreNavigationGestures {
+    for (UIGestureRecognizer *g in self.disabledNavRecognizers) {
+        g.enabled = YES;
+    }
+    self.disabledNavRecognizers = nil;
+}
+
 #pragma mark - Touch handling
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [self suspendNavigationGestures];
+    
     UITouch *touch = [touches anyObject];
     self.lastTouchLocation = [touch locationInView:self];
     self.lastTouchTimestamp = touch.timestamp;
@@ -1143,6 +1195,8 @@ RCT_EXPORT_MODULE()
 }
 
 - (void)endTouchWithTimestamp:(NSTimeInterval)timestamp {
+    [self restoreNavigationGestures];
+    
     self.lastTouchLocation = CGPointZero;
     self.isTouchActive = NO;
     
@@ -1176,6 +1230,8 @@ RCT_EXPORT_MODULE()
 - (void)cleanup {
     if (!self.isCleaned) {
         self.isCleaned = YES;
+        
+        [self restoreNavigationGestures];
         
         ClusteringAndEllipsoids *clustering = [[ClusteringAndEllipsoids alloc] init];
         [clustering freeClusteringData:self.clusteringResults];
