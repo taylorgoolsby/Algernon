@@ -58,7 +58,7 @@ export default class AnnotationInterface {
         ${annotationId},
         ${messageId},
         ${annotationText},
-        ${JSON.stringify(vector)}
+        ${JSON.stringify([])}
       );
     `
 

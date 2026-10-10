@@ -9,7 +9,7 @@ import MessageInterface from "../schema/Message/MessageInterface";
 import GeneralResponse from "./GeneralResponse";
 // import GeneralResponse from "./GeneralResponse.js";
 // import ShortTermSummarization from "./ShortTermSummarization.js";
-// import LongTermAnnotation from "./LongTermAnnotation.js";
+import LongTermAnnotation from "./LongTermAnnotation";
 // import Browser from "./Browser";
 
 export default class ChatIteration {
@@ -46,7 +46,7 @@ export default class ChatIteration {
 
       // Create an iteration task (a function) that runs `iterate`
       const iterationTask = () => {
-        ChatIteration.iterate(windowId, model, userPrompt, onAppendMessage, onUpdateMessage, onError, userMessage, emptyResponse);
+        ChatIteration.iterate(windowId, model, userPrompt, onAppendMessage, onUpdateMessage, onError, userMessage, emptyResponse, false);
       };
 
       // Check if an iteration is currently running
@@ -88,7 +88,7 @@ export default class ChatIteration {
 
       // Create an iteration task (a function) that runs `iterate`
       const iterationTask = () => {
-        ChatIteration.iterate(windowId, model, userMessage.text, onAppendMessage, onUpdateMessage, onError, userMessage, emptyResponse);
+        ChatIteration.iterate(windowId, model, userMessage.text, onAppendMessage, onUpdateMessage, onError, userMessage, emptyResponse, true);
       };
 
       // Check if an iteration is currently running
@@ -129,6 +129,7 @@ export default class ChatIteration {
     onError: (error: Error) => any,
     userMessage: MessageSQL,
     emptyResponse: MessageSQL,
+    isRegeneration: boolean
   ) {
     Promise.resolve().then(async () => {
       try {
@@ -141,8 +142,8 @@ export default class ChatIteration {
 
         // todo only get the last 2:
         const allMessages = await MessageInterface.getAll(windowId);
-        const lastAgentMessage = allMessages[allMessages.length - 2]
-        const lastUserMessage = allMessages[allMessages.length - 1]
+        // const lastAgentMessage = allMessages[allMessages.length - 2]
+        // const lastUserMessage = allMessages[allMessages.length - 1]
 
         // Show a blank message in the UI while waiting:
         // const emptyResponse = await MessageInterface.insert(
@@ -188,8 +189,10 @@ export default class ChatIteration {
           onUpdateMessage,
         );
 
-        // LongTermAnnotation.backgroundAnnotate(model, lastUserMessage)
-        // LongTermAnnotation.backgroundAnnotate(model, finalResponse)
+        if (!isRegeneration) {
+          LongTermAnnotation.backgroundAnnotate(model, userMessage)
+        }
+        LongTermAnnotation.backgroundAnnotate(model, finalResponse)
       } catch (err) {
         console.error(err);
         // @ts-ignore

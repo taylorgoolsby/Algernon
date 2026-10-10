@@ -31,34 +31,34 @@ export default class LongTermAnnotation {
   static backgroundAnnotate(
     model: ModelConfig,
     message: MessageSQL,
-    searchSummary: string | null | undefined,
   ): void {
     Promise.resolve().then(async () => {
       try {
-        const text = message.text + '\n\n' + (searchSummary ?? '')
+        const text = message.text
+        await LongTermAnnotation.embedAndInsert(message, text)
 
-        const annotations = await LongTermAnnotation.getAnnotations(
-          model,
-          text,
-        )
-        console.log("annotations", annotations);
+        // const annotations = await LongTermAnnotation.getAnnotations(
+        //   model,
+        //   text,
+        // )
+        // console.log("annotations", annotations);
 
-        for (const annotationText of annotations) {
-          await LongTermAnnotation.embedAndInsert(message, annotationText)
-        }
+        // for (const annotationText of annotations) {
+        //   await LongTermAnnotation.embedAndInsert(message, annotationText)
+        // }
       } catch (err) {
         console.error(err)
       }
     })
   }
 
-  static async embedAndInsert(message: MessageSQL, annotationText: string): Promise<void> {
-    const embedding: Array<number> = await TextFeatureExtractor.extractFeatures(annotationText)
-    const annotationId = await LongTermAnnotation.insert(embedding)
+  static async embedAndInsert(message: MessageSQL, text: string): Promise<void> {
+    const embedding: Array<number> = await TextFeatureExtractor.extractFeatures(text)
+    const label = await LongTermAnnotation.insertFaiss(embedding)
     await AnnotationInterface.insert(
-      annotationId,
+      label,
       message.messageId,
-      annotationText,
+      text,
       embedding,
     )
   }
@@ -122,7 +122,7 @@ For example, "Quantum computing has the potential to revolutionize industries by
   Adds an embedding to the vector database.
   Returns the label of the embedding.
   * */
-  static async insert(vector: Array<number>): Promise<number> {
+  static async insertFaiss(vector: Array<number>): Promise<number> {
     // let k = 1
     //
     // if (!index) {

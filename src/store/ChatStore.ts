@@ -155,13 +155,13 @@ class ChatStore {
   }
 
   appendMessage: (output: AppendMessageOutput) => void = (output: AppendMessageOutput) => {
-    console.log('output.message', output.message)
     this.displayedMessageIds = [...this.displayedMessageIds, output.message.messageId.toString()]
     this.messages[output.message.messageId.toString()] = output.message
     this.hapticFeedback()
   }
 
   updateMessage: (output: UpdateMessageOutput) => void = (output: UpdateMessageOutput) => {
+    // console.log('output.message', output.message)
     this.messages[output.message.messageId.toString()] = output.message
     setTimeout(() => {
       this.hapticFeedback()
