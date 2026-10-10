@@ -1,45 +1,29 @@
-import React from 'react'
-import { FlatList, View, KeyboardAvoidingView } from 'react-native'
+import React, { useRef } from 'react'
+import { FlatList, KeyboardAvoidingView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import ChatItem from './ChatItem'
 import { extraHeight } from './ChatHeader'
 import { observer } from 'mobx-react-lite'
 import { chatStore } from '../store/ChatStore'
 
-// const data = [
-//   {
-//     id: '1',
-//     name: 'AI',
-//     content: 'Hi, how can I help you?',
-//     role: 'assistant',
-//   },
-//   {
-//     id: '2',
-//     name: 'Taylor',
-//     content: 'Help me organize my thoughts.',
-//     role: 'user',
-//   },
-//   {
-//     id: '3',
-//     name: 'AI',
-//     content: `Sure, what's on your mind?`,
-//     role: 'assistant',
-//   },
-// ];
-
 const ChatScrollView = observer(() => {
   const safeAreaInsets = useSafeAreaInsets()
+  const listRef = useRef<FlatList>(null)
+
+  const data = chatStore.searchMode
+    ? chatStore.searchResultMessageIds
+    : chatStore.displayedMessageIds
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={'padding'}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <FlatList
+        ref={listRef}
         style={{
           flex: 1,
           paddingTop: safeAreaInsets.top + extraHeight,
           paddingBottom: safeAreaInsets.bottom,
           paddingLeft: safeAreaInsets.left,
           paddingRight: safeAreaInsets.right,
-          // backgroundColor: 'red'
         }}
         contentContainerStyle={{
           paddingTop: 8,
@@ -47,24 +31,18 @@ const ChatScrollView = observer(() => {
           paddingLeft: 16,
           paddingRight: 16,
         }}
-        data={
-          chatStore.searchMode
-            ? chatStore.searchResultMessageIds
-            : chatStore.displayedMessageIds
-        }
-        extraData={
-          chatStore.searchMode
-            ? chatStore.searchResultMessageIds.map(
-                id => chatStore.messages[id]?.text,
-              )
-            : chatStore.displayedMessageIds.map(
-                id => chatStore.messages[id]?.text,
-              )
-        }
-        renderItem={({ item }) => {
-          return <ChatItem message={chatStore.messages[item]} />
-        }}
+        data={data}
+        extraData={data.map(id => chatStore.messages[id]?.text)}
+        renderItem={({ item }) => (
+          <ChatItem message={chatStore.messages[item]} />
+        )}
         keyExtractor={item => item}
+        onContentSizeChange={() => {
+          listRef.current?.scrollToOffset({
+            offset: Number.MAX_SAFE_INTEGER,
+            animated: true,
+          })
+        }}
       />
     </KeyboardAvoidingView>
   )
