@@ -1,15 +1,19 @@
-import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BlurView } from '@react-native-community/blur';
-import { useNavigation } from '@react-navigation/native';
-import Text from './Text';
+// ChatHeader.tsx
+import React from 'react'
+import { StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { BlurView } from '@react-native-community/blur'
+import { useNavigation } from '@react-navigation/native'
+import { Ionicons } from '@react-native-vector-icons/ionicons/static'
+import Text from './Text'
 
-export const extraHeight = 31;
+const { width } = Dimensions.get('window')
+
+export const extraHeight = 31
 
 const ChatHeader = () => {
-  const safeAreaInsets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const safeAreaInsets = useSafeAreaInsets()
+  const navigation = useNavigation()
 
   return (
     <BlurView
@@ -24,6 +28,10 @@ const ChatHeader = () => {
       <View
         style={{
           paddingTop: safeAreaInsets.top,
+          flexDirection: 'row',
+          alignItems: 'flex-end',
+          alignSelf: 'stretch',
+          width: width,
         }}
       >
         <TouchableOpacity
@@ -43,10 +51,27 @@ const ChatHeader = () => {
             }}
           />
         </TouchableOpacity>
+
+        <View style={{ flex: 1 }} />
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Memories' as never)}
+          style={{
+            paddingLeft: 25,
+            paddingRight: 25,
+            paddingBottom: extraHeight - 22,
+          }}
+        >
+          <Ionicons
+            name={'sparkles'}
+            size={20}
+            color={'white'}
+          />
+        </TouchableOpacity>
       </View>
     </BlurView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -60,6 +85,6 @@ const styles = StyleSheet.create({
     // width: 50,
     // height: 90
   },
-});
+})
 
-export default ChatHeader;
+export default ChatHeader

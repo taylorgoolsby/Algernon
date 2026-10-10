@@ -75,6 +75,7 @@
 		34949F5E30699DC60035D7C7 /* Poppins-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 34949F5030699DC60035D7C7 /* Poppins-ExtraBold.ttf */; };
 		34949F5F30699DC60035D7C7 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 34949F5230699DC60035D7C7 /* Poppins-Medium.ttf */; };
 		34949F6030699DC60035D7C7 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 34949F4F30699DC60035D7C7 /* Poppins-Bold.ttf */; };
+		34AD4AB6307A9C8D0078458E /* PlotView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34AD4AB5307A9C8D0078458E /* PlotView.m */; };
 		34B6258D306F1B1000907444 /* AudioTranscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B6258B306F1B1000907444 /* AudioTranscription.swift */; };
 		34B6258E306F1B1000907444 /* AudioTranscriptionBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 34B6258C306F1B1000907444 /* AudioTranscriptionBridge.m */; };
 		70E13A26338767186384147B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
@@ -144,6 +145,8 @@
 		34949F5230699DC60035D7C7 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Medium.ttf"; sourceTree = "<group>"; };
 		34949F5330699DC60035D7C7 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Regular.ttf"; sourceTree = "<group>"; };
 		34949F5430699DC60035D7C7 /* PTMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PTMono-Regular.ttf"; sourceTree = "<group>"; };
+		34AD4AB4307A9C8D0078458E /* PlotView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlotView.h; sourceTree = "<group>"; };
+		34AD4AB5307A9C8D0078458E /* PlotView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlotView.m; sourceTree = "<group>"; };
 		34B6258B306F1B1000907444 /* AudioTranscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTranscription.swift; sourceTree = "<group>"; };
 		34B6258C306F1B1000907444 /* AudioTranscriptionBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioTranscriptionBridge.m; sourceTree = "<group>"; };
 		34B6258F306F4E3800907444 /* Algernon.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Algernon.entitlements; path = Algernon/Algernon.entitlements; sourceTree = "<group>"; };
@@ -207,6 +210,8 @@
 				34B6258C306F1B1000907444 /* AudioTranscriptionBridge.m */,
 				347C1CBE306E0CB100DF2C88 /* FaissBridge.h */,
 				347C1CBF306E0CB100DF2C88 /* FaissBridge.m */,
+				34AD4AB4307A9C8D0078458E /* PlotView.h */,
+				34AD4AB5307A9C8D0078458E /* PlotView.m */,
 				347C1CC5306E0D0B00DF2C88 /* ClusteringAndEllipsoids.h */,
 				347C1CC6306E0D0B00DF2C88 /* ClusteringAndEllipsoids.m */,
 			);
@@ -399,7 +404,7 @@
 				34899D4430672AC800089BEF /* XCRemoteSwiftPackageReference "SwiftWhisper" */,
 				34899D563067574500089BEF /* XCRemoteSwiftPackageReference "swift-transformers" */,
 				34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */,
-				346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB" */,
+				346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
 				347C1CC8306E0EA000DF2C88 /* XCRemoteSwiftPackageReference "openmp-mobile" */,
 			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -466,13 +471,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -509,13 +510,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Algernon/Pods-Algernon-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -530,6 +527,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34899D4930673E0200089BEF /* LLMNativeModule.m in Sources */,
+				34AD4AB6307A9C8D0078458E /* PlotView.m in Sources */,
 				34899D4A30673E0200089BEF /* LLMNativeModule.swift in Sources */,
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
 				34899D2A306727DB00089BEF /* TextFeatureExtractor.m in Sources */,
@@ -816,7 +814,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB" */ = {
+		346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift";
 			requirement = {
@@ -847,8 +845,6 @@
 				kind = exactVersion;
 				version = 1.3.4;
 			};
-			traits = (
-			);
 		};
 		34899D8A3067585000089BEF /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -863,7 +859,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		346AE8D5306B6A4E003F3E36 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB" */;
+			package = 346AE8D4306B6A4E003F3E36 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
 			productName = GRDB;
 		};
 		347C1CC9306E0EA000DF2C88 /* OpenMP */ = {
