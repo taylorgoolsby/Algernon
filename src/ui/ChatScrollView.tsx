@@ -1,44 +1,48 @@
 import React, { useRef, useEffect } from 'react'
-import { FlatList, KeyboardAvoidingView } from 'react-native'
+import { KeyboardAvoidingView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import ChatItem from './ChatItem'
 import { extraHeight } from './ChatHeader'
 import { observer } from 'mobx-react-lite'
 import { chatStore } from '../store/ChatStore'
+import VirtualizedList, { VirtualizedListHandle } from './VirtualizedList'
+import { MessageRole } from '../schema/Message/MessageSchema'
 
 const ChatScrollView = observer(() => {
   const safeAreaInsets = useSafeAreaInsets()
-  const listRef = useRef<FlatList>(null)
+
+  const listRef = useRef<VirtualizedListHandle>(null)
+  const prevData = useRef<ReadonlyArray<string> | null>(null)
 
   const data = chatStore.searchMode
     ? chatStore.searchResultMessageIds
     : chatStore.displayedMessageIds
 
+  // Following new content while at the bottom is handled by the list itself.
+  // The one case it can't know about: when the user posts a message, always
+  // jump to the bottom, even if they had scrolled up.
   useEffect(() => {
-    setTimeout(() => {
-      listRef.current?.scrollToOffset({
-        offset: Number.MAX_SAFE_INTEGER,
-        animated: true,
-      })
-    }, 1000)
+    const prev = prevData.current
+    prevData.current = data
+    if (!prev || prev.length === 0 || chatStore.searchMode) return
+    if (data.length <= prev.length) return
+    const lastId = data[data.length - 1]
+    if (lastId === prev[prev.length - 1]) return
+    if (chatStore.messages[lastId]?.role === MessageRole.USER) {
+      listRef.current?.scrollToEnd({ animated: true })
+    }
   }, [data])
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-      <FlatList
+      <VirtualizedList
         ref={listRef}
-        style={{
-          flex: 1,
-          paddingTop: safeAreaInsets.top + extraHeight,
-          paddingBottom: safeAreaInsets.bottom,
-          paddingLeft: safeAreaInsets.left,
-          paddingRight: safeAreaInsets.right,
-        }}
+        style={{ flex: 1 }}
         contentContainerStyle={{
-          paddingTop: 8,
+          paddingTop: safeAreaInsets.top + extraHeight + 8,
           paddingBottom: 8 + safeAreaInsets.bottom + 50,
-          paddingLeft: 16,
-          paddingRight: 16,
+          paddingLeft: 16 + safeAreaInsets.left,
+          paddingRight: 16 + safeAreaInsets.right,
         }}
         data={data}
         extraData={data.map(id => chatStore.messages[id]?.text)}
