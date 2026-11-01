@@ -1,3 +1,4 @@
+// src/agent/generateTextResponse.ts
 // @flow
 
 import { NativeEventEmitter, NativeModules } from 'react-native';
@@ -10,6 +11,26 @@ const { LLMNativeModule } = NativeModules;
 
 // Initialize the event emitter for listening to token generation events
 const eventEmitter = new NativeEventEmitter(LLMNativeModule);
+
+// Llama 3 chat format. `ipython` (alias `tool`) carries tool results back to
+// the model after it has made a tool call.
+const ROLE_HEADERS: { [role: string]: string } = {
+  system: 'system',
+  user: 'user',
+  assistant: 'assistant',
+  ipython: 'ipython',
+  tool: 'ipython',
+};
+
+export function formatLlamaPrompt(input: Array<GPTMessage>): string {
+  return '<|begin_of_text|>' + input
+    .filter((message) => ROLE_HEADERS[message.role])
+    .map((message) => (
+      '<|start_header_id|>' + ROLE_HEADERS[message.role] + '<|end_header_id|>\n' +
+      message.content + '<|eot_id|>'
+    ))
+    .join('\n') + '<|start_header_id|>assistant<|end_header_id|>\n\n';
+}
 
 // Function to set up event listener for token generation
 const setupTokenListener = (callback: (output: string) => void) => {
@@ -39,15 +60,7 @@ async function streamOnDevice(
   /*
   "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\nYou are a helpful assistant<|eot_id|>\n<|start_header_id|>user<|end_header_id|>\n\(prompt)<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>"
   * */
-  const inputString = '<|begin_of_text|>' + input.map((message) => {
-    if (message.role === 'system') {
-      return '<|start_header_id|>system<|end_header_id|>\n' + message.content + '<|eot_id|>';
-    } else if (message.role === 'user') {
-      return '<|start_header_id|>user<|end_header_id|>\n' + message.content + '<|eot_id|>';
-    } else if (message.role === 'assistant') {
-      return '<|start_header_id|>assistant<|end_header_id|>\n' + message.content + '<|eot_id|>';
-    }
-  }).join('\n') + '<|start_header_id|>assistant<|end_header_id|>\n\n' //+ (options?.jsonMode ? '[' : '');
+  const inputString = formatLlamaPrompt(input);
 
   let finishReason: 'stop' | 'length' | 'content_filter' | 'tool_calls' | null = null; // Variable to track if we've hit a stop condition
 
@@ -220,15 +233,7 @@ export default async function generateTextResponse(input: Array<GPTMessage>, onR
   /*
   "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\nYou are a helpful assistant<|eot_id|>\n<|start_header_id|>user<|end_header_id|>\n\(prompt)<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>"
   * */
-  const inputString = '<|begin_of_text|>' + input.map((message) => {
-    if (message.role === 'system') {
-      return '<|start_header_id|>system<|end_header_id|>\n' + message.content + '<|eot_id|>';
-    } else if (message.role === 'user') {
-      return '<|start_header_id|>user<|end_header_id|>\n' + message.content + '<|eot_id|>';
-    } else if (message.role === 'assistant') {
-      return '<|start_header_id|>assistant<|end_header_id|>\n' + message.content + '<|eot_id|>';
-    }
-  }).join('\n') + '<|start_header_id|>assistant<|end_header_id|>\n\n' //+ (options?.jsonMode ? '[' : '');
+  const inputString = formatLlamaPrompt(input);
 
   
 

@@ -1,3 +1,4 @@
+// src/ui/ChatItem.tsx
 import React, { useState } from 'react';
 
 import {
@@ -6,7 +7,6 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
-  Text as RNText,
 } from 'react-native';
 
 import Colors, {
@@ -25,6 +25,7 @@ import Markdown from 'react-native-markdown-display';
 import ProfilePic from './ProfilePic';
 import { Ionicons } from '@react-native-vector-icons/ionicons/static';
 import Spinner from './Spinner';
+import selectableMarkdownRules from './selectableMarkdownRules';
 
 import {
   MessageRole,
@@ -99,49 +100,16 @@ const Message = (props: ChatItemProps) => {
     // console.error(error)
   }
 
-  const rules = {
-    text: (
-      node: any,
-      children: any,
-      parent: any,
-      styles: any,
-      inheritedStyles = {},
-    ) => (
-      <RNText
-        key={node.key}
-        style={[inheritedStyles, styles.text]}
-        selectable={true}
-      >
-        {node.content}
-      </RNText>
-    ),
-
-    textgroup: (
-      node: any,
-      children: any,
-      parent: any,
-      styles: any,
-    ) => (
-      <RNText
-        key={node.key}
-        style={styles.textgroup}
-        selectable={true}
-      >
-        {children}
-      </RNText>
-    ),
-  };
-
   return !!text ? (
     <View
       style={{
-        marginTop: -8,
-        marginBottom: -8,
+        marginTop: 2,
+        marginBottom: 2,
         marginLeft: 2,
       }}
     >
       <Markdown
-        rules={rules}
+        rules={selectableMarkdownRules}
         style={{
           body: {
             color: 'white',

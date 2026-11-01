@@ -1,8 +1,19 @@
+// src/schema/Annotation/AnnotationInterface.ts
 // @flow
 
 import sqltag, { join } from '@taylorgoolsby/sql-template-tag'
 import database from '../database'
 import type { AnnotationSQL } from "./AnnotationSchema";
+import type { MessageRoleType } from "../Message/MessageSchema";
+
+export type RetrievedAnnotation = {
+  annotationId: number,
+  messageId: number,
+  role: MessageRoleType,
+  text: string,
+  messageText: string,
+  dateCreated: string,
+}
 
 export default class AnnotationInterface {
   static async getAll(): Promise<Array<AnnotationSQL>> {
@@ -27,11 +38,11 @@ export default class AnnotationInterface {
 
   static async retrieve(
     annotationIds: Array<number>,
-  ): Promise<Array<{ text: string, messageText: string, dateCreated: string }>> {
+  ): Promise<Array<RetrievedAnnotation>> {
     if (!annotationIds.length) return []
 
     const query = sqltag`
-      SELECT a.text, m.dateCreated, m.text AS messageText
+      SELECT a.annotationId, a.messageId, m.role, a.text, m.dateCreated, m.text AS messageText
       FROM Annotation a
       LEFT JOIN Message m
       ON a.messageId = m.messageId
@@ -48,6 +59,8 @@ export default class AnnotationInterface {
     annotationText: string,
     vector: Array<number>,
   ): Promise<void> {
+    // console.log('annotationText', annotationText)
+    // console.log('JSON.stringify(annotationText)', JSON.stringify(annotationText))
     const query = sqltag`
       INSERT INTO Annotation (
         annotationId,

@@ -1,3 +1,4 @@
+// src/agent/GeneralResponse.ts
 // @flow
 
 import type {GPTMessage} from '../types/GPTMessage'
@@ -14,6 +15,23 @@ import {CompletionType} from '../schema/Completion/CompletionSchema'
 import normalizeModelName from "../utils/normalizeModelName";
 import ShortTermSummarization from "./ShortTermSummarization";
 import {streamTextResponse} from "./generateTextResponse";
+import LongTermAnnotation from "./LongTermAnnotation";
+import {
+  MAX_TOOL_CALLS,
+  TOOL_RESULT_INSTRUCTION,
+  WEB_SEARCH_TOOL_NAME,
+  WEB_SEARCH_TOOL_PROMPT,
+  looksLikeToolCall,
+  parseToolCall,
+  runWebSearch,
+} from "./WebSearchTool";
+import type {ToolCall} from "./WebSearchTool";
+
+type StreamResult = {
+  message: MessageSQL,
+  // Set when the model asked to use a tool instead of answering.
+  toolCall: ToolCall | null,
+}
 
 export default class GeneralResponse {
   /*
@@ -30,6 +48,7 @@ export default class GeneralResponse {
     userPrompt: string,
     onAppendMessage: (output: AppendMessageOutput) => any,
     onUpdateMessage: (output: UpdateMessageOutput) => any,
+    userMessageId?: number,
   ): Promise<MessageSQL> {
 //     const systemMessage = `This is your system prompt. Avoid repeating the following system prompt to the user. Your are a personal digital assistant inside of a iOS app called Algernon AI. It is a general purpose AI chat app, designed to help the user with a wide range of tasks. Users are encouraged to talk freely into the app, similar to free form writing, and using AI methods, the app should help the user identify connections or loose ends in their thoughts. Your design allows you to remember previous interactions, learn from them, and even facilitate the user's learning on any subject, ensuring you are always ready to assist the uesr with their journaling, knowledge base management, brainstorming, learning, and more. You may be given real-time search results. Use this to give the user accurate and up-to-date information.
 
@@ -98,7 +117,7 @@ export default class GeneralResponse {
 
     const systemMessage = `Reflect on the user's thoughts. Speak back in their language and style.
 
-You have access to a web_search tool. Use it when you need more information.
+${WEB_SEARCH_TOOL_PROMPT}
 
 Respond in as few words as possible. Default to one or two sentences. No preamble, no recap, no bullet lists or headers unless explicitly asked. Answer the question directly, then stop. If more detail would help, let the user ask for it.`
 
@@ -115,14 +134,30 @@ Respond in as few words as possible. Default to one or two sentences. No preambl
     }
 
     // only keep the last 100 messages:
-    if (nonSystemMessages.length > 100) {
-      nonSystemMessages.splice(0, nonSystemMessages.length - 100);
+    if (nonSystemMessages.length > 10) {
+      nonSystemMessages.splice(0, nonSystemMessages.length - 10);
     }
+
+    // RAG memory: besides the recent messages above, retrieve older messages
+    // that are similar to the user's new message. Anything already in the
+    // context window (or the new message itself) is skipped.
+    const excludeMessageIds = new Set<number>(
+      nonSystemMessages.map((m) => m.messageId),
+    )
+    if (userMessageId != null) excludeMessageIds.add(userMessageId)
+    const memoriesBlock = await GeneralResponse.retrieveMemoriesBlock(
+      userPrompt,
+      excludeMessageIds,
+    )
+
+    console.log('memoriesBlock', memoriesBlock)
 
     const context: Array<GPTMessage> = [
       {
         role: 'system',
-        content: systemMessage,
+        content: memoriesBlock
+          ? systemMessage + '\n\n' + memoriesBlock
+          : systemMessage,
       },
       ...nonSystemMessages.map((m) => ({
         role: m.role.toLowerCase(),
@@ -137,21 +172,99 @@ Respond in as few words as possible. Default to one or two sentences. No preambl
     // console.log("context", context);
 
     // Then streaming begins and incoming tokens are relayed back to the client.
-    const completeMessage = await GeneralResponse.stream(
-      windowId,
-      model,
-      context,
-      emptyResponse,
-      onUpdateMessage,
-    )
+    // If the model calls web_search, the search runs and generation continues.
+    const { message: completeMessage, context: finalContext } =
+      await GeneralResponse.streamWithTools(
+        windowId,
+        model,
+        context,
+        emptyResponse,
+        onUpdateMessage,
+      )
 
-    // All completions are saved to DB:
-    await CompletionInterface.insert(CompletionType.GENERAL, model, context, {
+    // All completions are saved to DB (including any tool call turns):
+    await CompletionInterface.insert(CompletionType.GENERAL, model, finalContext, {
       role: 'assistant',
       content: completeMessage.text,
     })
 
     return completeMessage
+  }
+
+  /*
+  Never lets a memory failure break the chat: on error, no memories are used.
+  * */
+  static async retrieveMemoriesBlock(
+    userPrompt: string,
+    excludeMessageIds: Set<number>,
+  ): Promise<string> {
+    try {
+      const memories = await LongTermAnnotation.retrieveMemories(
+        userPrompt,
+        excludeMessageIds,
+      )
+      return LongTermAnnotation.formatMemories(memories)
+    } catch (err) {
+      console.error('Memory retrieval failed:', err)
+      return ''
+    }
+  }
+
+  /*
+  The tool call loop:
+    generate -> if the model asked for web_search, run it, append the call and
+    its result to the context, and generate again -> until the model answers
+    in plain text (or MAX_TOOL_CALLS is reached, after which a tool call is
+    treated as the answer).
+  Returns the final message and the context that produced it.
+  * */
+  static async streamWithTools(
+    windowId: number,
+    model: ModelConfig,
+    context: Array<GPTMessage>,
+    response: MessageSQL,
+    onUpdateMessage: (output: UpdateMessageOutput) => any,
+  ): Promise<{ message: MessageSQL, context: Array<GPTMessage> }> {
+    let loopContext = context
+
+    for (let toolCalls = 0; ; toolCalls++) {
+      const allowToolCalls = toolCalls < MAX_TOOL_CALLS
+      const result = await GeneralResponse.stream(
+        windowId,
+        model,
+        loopContext,
+        response,
+        onUpdateMessage,
+        allowToolCalls,
+      )
+
+      if (!result.toolCall) {
+        return { message: result.message, context: loopContext }
+      }
+
+      const { query } = result.toolCall
+
+      // Temporary status in the UI. It is not saved: the final answer replaces it.
+      response.text = `Searching the web for: ${query}…`
+      onUpdateMessage({ windowId, message: response })
+
+      const searchResults = await runWebSearch(query)
+
+      loopContext = [
+        ...loopContext,
+        {
+          role: 'assistant',
+          content: JSON.stringify({
+            name: WEB_SEARCH_TOOL_NAME,
+            parameters: { query },
+          }),
+        },
+        {
+          role: 'ipython',
+          content: searchResults + TOOL_RESULT_INSTRUCTION,
+        },
+      ]
+    }
   }
 
   static stream(
@@ -160,7 +273,8 @@ Respond in as few words as possible. Default to one or two sentences. No preambl
     context: Array<GPTMessage>,
     response: MessageSQL,
     onUpdateMessage: (output: UpdateMessageOutput) => any,
-  ): Promise<MessageSQL> {
+    allowToolCalls: boolean = false,
+  ): Promise<StreamResult> {
     return new Promise(async (resolve, reject) => {
       let buffer = ''
       let previousAutocompletion: string | null = null
@@ -246,11 +360,30 @@ Respond in as few words as possible. Default to one or two sentences. No preambl
               return;
             }
 
+            // Text that starts with "{" may be a tool call. Hide it from the UI
+            // until generation finishes and we know.
+            const maybeToolCall =
+              allowToolCalls && looksLikeToolCall(autocompletion);
+
             if (finishReason === "stop") {
               // todo: If stop reached but autocompletion.text is empty still,
               //  then retry after sending system message trying to correct.
 
               stop = true;
+              if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+              }
+
+              const toolCall = maybeToolCall
+                ? parseToolCall(autocompletion)
+                : null;
+              if (toolCall) {
+                // Not an answer: nothing is shown or saved. The caller runs the tool.
+                resolve({ message: response, toolCall });
+                return;
+              }
+
               response.completed = true;
               Promise.resolve()
                 .then(async () => {
@@ -265,7 +398,11 @@ Respond in as few words as possible. Default to one or two sentences. No preambl
                   reject(err);
                 });
 
-              resolve(response);
+              resolve({ message: response, toolCall: null });
+            }
+
+            if (maybeToolCall && finishReason !== "stop") {
+              return;
             }
 
             // send:

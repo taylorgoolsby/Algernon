@@ -1,3 +1,4 @@
+// src/agent/LongTermAnnotation.ts
 // @flow
 
 import type { MessageSQL } from '../schema/Message/MessageSchema'
@@ -7,6 +8,7 @@ import type {ModelConfig} from "../types/ModelConfig";
 import { NativeModules } from 'react-native';
 import MessageInterface from "../schema/Message/MessageInterface";
 import { syncTextResponse } from "./generateTextResponse";
+import type { RetrievedAnnotation } from "../schema/Annotation/AnnotationInterface";
 
 const { TextFeatureExtractor, FaissBridge } = NativeModules;
 
@@ -14,6 +16,11 @@ const { TextFeatureExtractor, FaissBridge } = NativeModules;
 // const D = 384
 // const INDEX_PATH = 'index.faiss'
 const DISTANCE_THRESHOLD = 0.25
+// RAG memory: how many neighbors to ask FAISS for (extra, because some will be
+// dropped for already being in the context window), and how many to keep.
+const MEMORY_SEARCH_K = 20
+const MAX_MEMORIES = 5
+const MAX_MEMORY_CHARS = 600
 // let pipe: any
 // let index: any
 
@@ -140,12 +147,13 @@ For example, "Quantum computing has the potential to revolutionize industries by
     // }
 
     const label = await FaissBridge.addVector(vector)
-    console.log("label", label);
+    // console.log("label", label);
     return label
   }
 
   static async search(
     topic: string,
+    maxResults: number = 10,
   ): Promise<{ distances: Array<number>, labels: Array<number> }> {
     // if (!pipe) {
     //   pipe = await pipeline('feature-extraction', MODEL)
@@ -164,9 +172,109 @@ For example, "Quantum computing has the potential to revolutionize industries by
     //   }
     // }
     const ntotal = await FaissBridge.ntotal()
-    const k = Math.min(10, ntotal)
+    const k = Math.min(maxResults, ntotal)
+    if (k <= 0) {
+      // Nothing has been indexed yet.
+      return { distances: [], labels: [] }
+    }
     const res = await FaissBridge.searchVectors(embedding, k)
     return res
+  }
+
+  /*
+  RAG memory retrieval.
+  Embeds `query`, finds similar vectors in FAISS, and returns the annotations
+  (Annotation.annotationId === FAISS label) most similar first. Messages in
+  `excludeMessageIds` (e.g. ones already in the context window) are skipped.
+  * */
+  static async retrieveMemories(
+    query: string,
+    excludeMessageIds: Set<number>,
+    maxMemories: number = MAX_MEMORIES,
+  ): Promise<Array<RetrievedAnnotation>> {
+    const { labels, distances } = await LongTermAnnotation.search(
+      query,
+      MEMORY_SEARCH_K,
+    )
+
+    // const rows = await AnnotationInterface.retrieve(labels)
+    // Labels come back best match first. Drop padding labels (-1) and weak matches.
+    // const ranked = labels.filter(
+    //   (label, i) => label >= 0 && distances[i] > DISTANCE_THRESHOLD,
+    // )
+
+    /* 
+
+    export type RetrievedAnnotation = {
+      annotationId: number,
+      messageId: number,
+      role: MessageRoleType,
+      text: string,
+      messageText: string,
+      dateCreated: string,
+    }
+
+    */
+
+    const ranked = labels
+      .map((label, i) => ({ label, distance: distances[i] }))
+      .filter(({ label, distance }) => label >= 0 && distance > DISTANCE_THRESHOLD)
+      .sort((a, b) => b.distance - a.distance);
+
+    const rows = await AnnotationInterface.retrieve(ranked.map(({ label }) => label));
+    const byId = new Map(rows.map(row => [row.annotationId, row]));
+
+    // const texts = rows.map(row => row.text)
+    // for (let i = 0; i < labels.length; i++) {
+    //   console.log('labels[i] distances[i] texts[i]', labels[i], distances[i], texts[i])
+    // }
+
+    return ranked
+      .map(({ label }) => byId.get(label))
+      .filter((row): row is RetrievedAnnotation => row !== undefined);
+    // ignore the code below. Instead return right now. Return rows sorted by distance.
+    
+
+    // if (!ranked.length) return []
+
+    // // const rows = await AnnotationInterface.retrieve(ranked)
+    // // The SQL IN (...) lookup doesn't preserve similarity order, so restore it.
+    // const byAnnotationId = new Map(rows.map(row => [row.annotationId, row]))
+
+    // const memories: Array<RetrievedAnnotation> = []
+    // const seenMessageIds = new Set<number>()
+    // for (const label of ranked) {
+    //   const row = byAnnotationId.get(label)
+    //   if (!row) continue // e.g. its message was deleted
+    //   if (excludeMessageIds.has(row.messageId)) continue
+    //   if (seenMessageIds.has(row.messageId)) continue
+    //   seenMessageIds.add(row.messageId)
+    //   memories.push(row)
+    //   if (memories.length >= maxMemories) break
+    // }
+    // return memories
+  }
+
+  /*
+  Formats retrieved memories as a block for the system prompt.
+  Returns '' when there are none.
+  * */
+  static formatMemories(memories: Array<RetrievedAnnotation>): string {
+    if (!memories.length) return ''
+
+    const lines = memories.map(memory => {
+      const date = memory.dateCreated ? String(memory.dateCreated).slice(0, 10) : ''
+      const speaker = memory.role?.toUpperCase() === 'ASSISTANT' ? 'Assistant' : 'User'
+      const text =
+        memory.text.length > MAX_MEMORY_CHARS
+          ? memory.text.slice(0, MAX_MEMORY_CHARS) + '…'
+          : memory.text
+      return `- ${date ? `[${date}] ` : ''}${speaker}: ${text}`
+    })
+
+    return `# Relevant Memories
+These are earlier messages from past conversations that are related to the user's latest message. Use them only when they help, and do not mention that they were retrieved.
+${lines.join('\n')}`
   }
 
   static async detectTopic(

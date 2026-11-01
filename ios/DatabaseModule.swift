@@ -13,9 +13,9 @@ class DatabaseModule: NSObject {
     }
 
     @objc func executeQuery(_ query: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        print("query: \(query)")
+//        print("query: \(query)")
         let (isSuccessful, results, lastInsertRowID, errorMessage) = DatabaseManager.shared.executeQuery(query)
-        print("results: \(results)")
+        //print("results: \(results)")
         
         if isSuccessful {
             var response: [String: Any] = ["results": results]

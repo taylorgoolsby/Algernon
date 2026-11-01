@@ -34,7 +34,7 @@ export async function query(queryObject: Sql): Promise<any> {
   try {
     const queryString = flattenSql(queryObject);
     // const queryString = await DatabaseModule.format(queryObject.sql, queryObject.values);
-    console.log("queryString", queryString);
+    // console.log("queryString", queryString);
 
     const res = await DatabaseModule.executeQuery(queryString);
 
@@ -44,7 +44,7 @@ export async function query(queryObject: Sql): Promise<any> {
       results['insertId'] = res.insertId
     }
 
-    console.log("results", results);
+    // console.log("results", results);
 
     if (queryString.toLowerCase().includes('select')) {
       return results;

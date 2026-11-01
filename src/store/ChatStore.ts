@@ -1,3 +1,4 @@
+// src/store/ChatStore.ts
 import { makeAutoObservable, runInAction, observable, action } from 'mobx'
 import type { MessageSQL } from '../schema/Message/MessageSchema'
 import type { AppendMessageOutput } from '../types/AppendMessageOutput'
@@ -21,6 +22,8 @@ const { LLMNativeModule } = NativeModules
 //   name: string;
 // };
 
+export type ModelStatus = 'idle' | 'loading' | 'ready' | 'error'
+
 const INITIAL_LIMIT = 12
 let limit = INITIAL_LIMIT
 
@@ -38,8 +41,23 @@ class ChatStore {
 
   messages: { [messageId: string]: MessageSQL | null | undefined } = {}
 
+  // Model download / load status, shown in the UI.
+  modelStatus: ModelStatus = 'idle'
+  modelName: string = ''
+  // 0..1. Only meaningful while modelStatus === 'loading'. Stays 0 until the
+  // native side reports download progress (a cached model may never report).
+  modelProgress: number = 0
+  modelError: string = ''
+
   constructor() {
     makeAutoObservable(this)
+
+    new NativeEventEmitter(LLMNativeModule).addListener(
+      'onModelLoadProgress',
+      (event: { modelName: string; progress: number }) => {
+        this.setModelProgress(event.modelName, event.progress)
+      },
+    )
 
     // this.messages.push({
     //   messageId: this.messages.length,
@@ -75,13 +93,28 @@ class ChatStore {
       ChatStore.isModelLoaded = true
     }
 
+    chatStore.setModelStatus('loading')
+
     try {
       // Load the model and wait for the promise to resolve
       await LLMNativeModule.loadModel()
       console.log('Model loaded successfully!')
+      chatStore.setModelStatus('ready')
     } catch (error) {
       console.error('Error loading model:', error)
+      chatStore.setModelStatus('error', String(error))
     }
+  }
+
+  setModelStatus = (status: ModelStatus, error: string = '') => {
+    this.modelStatus = status
+    this.modelError = error
+    if (status === 'loading') this.modelProgress = 0
+  }
+
+  setModelProgress = (modelName: string, progress: number) => {
+    this.modelName = modelName
+    this.modelProgress = progress
   }
 
   reset() {
@@ -100,7 +133,6 @@ class ChatStore {
 
     limit = INITIAL_LIMIT
     const lastMessage = await MessageInterface.getLast(this.windowId)
-    console.log('lastMessage', lastMessage)
     if (!lastMessage) return
     limit = lastMessage.messageId
     this.offset = lastMessage.messageId // this offset will return nothing.

@@ -80,7 +80,7 @@ class DatabaseManager {
                         results.append(result)
                     }
                 } else {
-                    print("Executing query: \(query)")
+                    //print("Executing query: \(query)")
                     try db.execute(sql: query)
 
                     if normalizedQuery.starts(with: "insert") {

@@ -1,3 +1,4 @@
+// src/ui/ChatScreen.tsx
 // @flow
 
 import React from 'react'
@@ -8,12 +9,14 @@ import {
 import ChatScrollView from './ChatScrollView'
 import ChatHeader from './ChatHeader'
 import ChatFooter from './ChatFooter'
+import ModelStatusBanner from './ModelStatusBanner'
 
 const ChatScreen: any = () => {
   return (
     <View style={styles.container}>
       <ChatScrollView/>
       <ChatHeader/>
+      <ModelStatusBanner/>
       <ChatFooter/>      
     </View>
   )

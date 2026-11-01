@@ -1,3 +1,4 @@
+// ios/LLMNativeModule.swift
 import Foundation
 import MLX
 import MLXRandom
@@ -20,7 +21,7 @@ class LLMNativeModule: RCTEventEmitter {
 
     // Event emitter setup
     override func supportedEvents() -> [String]! {
-        return ["onTokenGenerated"]
+        return ["onTokenGenerated", "onModelLoadProgress"]
     }
 
     // Method to send the full response so far
@@ -37,6 +38,31 @@ class LLMNativeModule: RCTEventEmitter {
         
         // Send the formatted response
         self.sendEvent(withName: "onTokenGenerated", body: ["responseSoFar": formattedResponse])
+    }
+
+    // Download/load progress reporting. The progress handler can fire very
+    // often and from any thread, so only forward whole-percent changes.
+    private let progressLock = NSLock()
+    private var lastReportedPercent = -1
+
+    private func resetLoadProgress() {
+        progressLock.lock()
+        lastReportedPercent = -1
+        progressLock.unlock()
+    }
+
+    private func reportLoadProgress(modelName: String, fractionCompleted: Double) {
+        let percent = Int(fractionCompleted * 100)
+        progressLock.lock()
+        let changed = percent != lastReportedPercent
+        if changed { lastReportedPercent = percent }
+        progressLock.unlock()
+        guard changed else { return }
+
+        sendEvent(
+            withName: "onModelLoadProgress",
+            body: ["modelName": modelName, "progress": Double(percent) / 100.0]
+        )
     }
 
     // Add the generateResponse function to expose it to JavaScript
@@ -94,9 +120,14 @@ class LLMNativeModule: RCTEventEmitter {
             //MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
             MLX.Memory.cacheLimit = 20 * 1024 * 1024
 
+            resetLoadProgress()
             let modelContainer = try await loadModelContainer(configuration: modelConfiguration) {
-                [modelConfiguration] progress in
+                [weak self, modelConfiguration] progress in
                 print("Downloading \(modelConfiguration.id): \(Int(progress.fractionCompleted * 100))%")
+                self?.reportLoadProgress(
+                    modelName: modelConfiguration.name,
+                    fractionCompleted: progress.fractionCompleted
+                )
             }
 
             print("Loaded \(modelConfiguration.id). Weights: \(MLX.GPU.activeMemory / 1024 / 1024)M")
@@ -125,6 +156,7 @@ class LLMNativeModule: RCTEventEmitter {
             // Augment the prompt as needed
 //            let preparedPrompt = modelConfiguration.prepare(prompt: prompt)
             let preparedPrompt = prompt
+            print("prompt: \(prompt)")
 
             // Use modelContainer.perform to get the tokenizer synchronously
             let promptTokens: [Int] = await modelContainer.perform { model, tokenizer in
@@ -139,7 +171,9 @@ class LLMNativeModule: RCTEventEmitter {
                     promptTokens: promptTokens,
                     parameters: generateParameters,  // Use the generateParameters defined above
                     model: modelContainer.model,     // Assuming this is accessible
-                    tokenizer: modelContainer.tokenizer  // Assuming this is accessible
+                    tokenizer: modelContainer.tokenizer,  // Assuming this is accessible
+                    // Llama 3 ends a tool call turn with <|eom_id|> instead of <|eot_id|>.
+                    extraEOSTokens: ["<|eom_id|>", "<|eot_id|>"]
                 ) { tokens in
                     // Capture the tokens and process them outside the closure
                     Task {

@@ -1,3 +1,4 @@
+// src/agent/ChatIteration.ts
 // @flow
 
 import type { AppendMessageOutput } from "../types/AppendMessageOutput";
@@ -187,6 +188,7 @@ export default class ChatIteration {
           userPrompt,
           onAppendMessage,
           onUpdateMessage,
+          userMessage.messageId,
         );
 
         if (!isRegeneration) {

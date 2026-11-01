@@ -1,3 +1,4 @@
+// src/ui/ChatScrollView.tsx
 import React, { useRef, useEffect } from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
