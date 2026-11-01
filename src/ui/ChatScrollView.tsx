@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { FlatList, KeyboardAvoidingView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import ChatItem from './ChatItem'
@@ -13,6 +13,15 @@ const ChatScrollView = observer(() => {
   const data = chatStore.searchMode
     ? chatStore.searchResultMessageIds
     : chatStore.displayedMessageIds
+
+  useEffect(() => {
+    setTimeout(() => {
+      listRef.current?.scrollToOffset({
+        offset: Number.MAX_SAFE_INTEGER,
+        animated: true,
+      })
+    }, 1000)
+  }, [data])
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
@@ -37,12 +46,6 @@ const ChatScrollView = observer(() => {
           <ChatItem message={chatStore.messages[item]} />
         )}
         keyExtractor={item => item}
-        onContentSizeChange={() => {
-          listRef.current?.scrollToOffset({
-            offset: Number.MAX_SAFE_INTEGER,
-            animated: true,
-          })
-        }}
       />
     </KeyboardAvoidingView>
   )
